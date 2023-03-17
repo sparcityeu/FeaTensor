@@ -20,8 +20,9 @@ int main(int argc, char *argv[])
 	char *out_file_name = NULL;
 	int is_binary = 0;
 	int ask_csv = 0;
+	int only3d = 1;
 
-	while ((opt = getopt(argc, argv, "i:o:m:b:c:")) != -1) {
+	while ((opt = getopt(argc, argv, "i:o:m:b:c:d:")) != -1) {
         switch (opt) {
         case 'i':
             filename = strdup(optarg);
@@ -46,6 +47,9 @@ int main(int argc, char *argv[])
             break;
 		case 'c':
 			ask_csv = atoi (optarg);
+            break;
+		case 'd':
+			only3d = atoi (optarg);
             break;
         default: /* '?' */
             fprintf(stderr, "Usage: %s [-t nsecs] [-n] name\n",
@@ -122,24 +126,45 @@ int main(int argc, char *argv[])
 	
 	timer_end(file_read_tm);
 	
-	tensor *T_3D = create_tensor(3, nnz);
-	T_3D->tensor_name = filename;
-	T_3D->org_order = T->order;
+	if (only3d){
 	
-	tensor_to_3d (T, T_3D);
-	
-	
-	timer *extract_feat_tm = timer_start("time_extract_features_total");
-	mode_based_features *features = extract_features(T_3D, static_cast<EXTRACTION_METHOD>(method_choice));	
-	timer_end(extract_feat_tm);
+		tensor *T_3D = create_tensor(3, nnz);
+		T_3D->tensor_name = filename;
+		T_3D->org_order = T->order;
+		
+		tensor_to_3d (T, T_3D);
+		
+		
+		timer *extract_feat_tm = timer_start("time_extract_features_total");
+		mode_based_features *features = extract_features(T_3D, static_cast<EXTRACTION_METHOD>(method_choice));	
+		timer_end(extract_feat_tm);
 
-	std::ofstream out_file(out_file_name);
+		std::ofstream out_file(out_file_name);
 
-	if( ask_csv ){
-		out_file << all_mode_features_to_csv(features, T_3D->order);
+		if( ask_csv ){
+			out_file << all_mode_features_to_csv(features, T_3D->order);
+		}
+		else{
+			out_file << all_mode_features_to_json(features, T_3D->order);
+		}
 	}
+	
 	else{
-		out_file << all_mode_features_to_json(features, T_3D->order);
+		T->tensor_name = filename;
+		T->org_order = T->order;
+
+		timer *extract_feat_tm = timer_start("time_extract_features_total");
+		mode_based_features *features = extract_features(T, static_cast<EXTRACTION_METHOD>(method_choice));	
+		timer_end(extract_feat_tm);
+
+		std::ofstream out_file(out_file_name);
+
+		if( ask_csv ){
+			out_file << all_mode_features_to_csv(features, T->order);
+		}
+		else{
+			out_file << all_mode_features_to_json(features, T->order);
+		}
 	}
 	
 	return 0;

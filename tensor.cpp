@@ -12,7 +12,7 @@
 #include <parallel/algorithm>
 #include <parallel/numeric>
 
-#define PRINT_HEADER 0
+#define PRINT_HEADER 1
 #define PRINT_DEBUG 0
 
 /*
@@ -1663,13 +1663,15 @@ std::string all_mode_features_to_json(mode_based_features *features, int order)
 
 std::string all_mode_features_to_csv(mode_based_features *features, int order)
 {
-    std::string result = "BASE ";
+    // std::string result = "BASE ";
 	
-	if (PRINT_HEADER){
-		printf("\n HEADER: \n BASE ");
-	}
+	// if (PRINT_HEADER){
+		// printf("\n HEADER: \n BASE ");
+	// }
 
-	result +=  base_features_to_csv(features->base) ;
+	// result +=  base_features_to_csv(features->base) ;
+	
+	std::string result =  base_features_to_csv(features->base) ;
 
     int num_modes_for_slices = comb(order, 2);
     int num_modes_for_fibers = order;
@@ -1882,6 +1884,8 @@ std::string base_features_to_csv(base_features *features)
 	}
 	
 	sprintf(buffer + strlen(buffer), " \t %d ", features->org_order);
+	
+	
 	
 	for (int i = 0; i <features->order; i++){
 		sprintf(buffer + strlen(buffer), " \t %d ", features->dim[i]);
