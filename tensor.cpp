@@ -12,7 +12,7 @@
 #include <parallel/algorithm>
 #include <parallel/numeric>
 
-#define PRINT_HEADER 1
+#define PRINT_HEADER 0
 #define PRINT_DEBUG 0
 
 /*
