@@ -1,0 +1,8 @@
+featen
+*.txt
+nohup.out
+*.bak
+*.o
+*.orig
+*extract_fest_omp*
+*.json
