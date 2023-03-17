@@ -1842,10 +1842,6 @@ std::string base_features_to_json(base_features *features)
 	// strcat(buffer, (features->tensor_name).c_str());
 	sprintf(buffer + strlen(buffer), "\"order\" : %d, ", features->org_order);
 	
-	for (int i = 0; i <features->order; i++){
-		sprintf(buffer + strlen(buffer), "\"dim_%d\" : %d, ", i, features->dim[i]);
-	}
-	
     char const *format = "\"nnz\" : %d, \"sparsity\" : %g, \"sliceCnt\" : %llu, \"fiberCnt\" : %llu, \"nnzSliceCnt\":%d \"nnzFiberCnt\" : %d, \"slice_sparsity\" : %g, \"fiber_sparsity\" : %g, }";
 
     sprintf(buffer + strlen(buffer), format,
@@ -1859,7 +1855,9 @@ std::string base_features_to_json(base_features *features)
 			(0.0 + features->nnzFiberCnt) / features->fiberCnt * 100 
 		);
 		
-	
+	for (int i = 0; i <features->order; i++){
+		sprintf(buffer + strlen(buffer), "\"dim_%d\" : %d, ", i, features->dim[i]);
+	}
 
 
     return std::string(buffer, buffer + strlen(buffer));

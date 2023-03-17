@@ -111,11 +111,8 @@ int main(int argc, char *argv[])
 	printf("\ntensor : \t%s \n", filename);
 	printf("order : \t%d \n", order);
 	printf("dim : ");
-	for (int i = 0; i <order; i++){
-		printf("\t%d", T->dim[i]);
-	}
 	
-	printf("\nis_binary : \t%d \n", is_binary);
+	printf("is_binary : \t%d \n", is_binary);
 	printf("extraction_method : \t%d \n", method_choice);
 	printf("omp_max_threads : \t%d \n", omp_get_max_threads());
 	
