@@ -3,9 +3,6 @@
 ## **Documentation 📑** 
 
 
-> **⚠ WARNING: Serial Version Usage.**  
-> To use the non-parallel version which is outdated, go to the dir : `non_parallel_version`.
-
 This is a repository that provides different implementations for extracting the same features from tensors. The input tensor format is COO (*.tns* file format [1]). 
 
 ### **Compilation & Running**
@@ -23,13 +20,14 @@ All of the following algorithms output the same set of features. So, one can use
 
 To use one, write the choice number of the algorithm as parameter when running main (the placeholder : [algorithm choice]).
 
-| Algorithm | Choice Number | All Modes | N-dim | Description | 
-| --- | ----------- | -----| ----- | ----|
-| FRAGMENT | 0 |✅|❌ (only 3D tensors) |For each mode, sorts the tensor except the last dimension, calculates feature after slightly modifying this structure. |
-| **MAP** | 1 |✅|✅ |Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
-| SORT | 2 |✅|❌ (only 3D tensors) |Sorts all the modes to make the calculation. |
+| Algorithm | Description | 
+| --- | ---------------|
+| FRAGMENT | For each mode, sorts the tensor except the last dimension, calculates feature after slightly modifying this structure. |
+| MAP | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
+| SORT | Sorts all the modes to make the calculation. ***|
+| HYBRID | Combination of sort and fragment |
 
-**MAP** method is the feature extraction algorithm when no choice is provided.
+*** SORT is the default feature extraction method when no choice is provided.
 
 ### **Feature Set**
 
