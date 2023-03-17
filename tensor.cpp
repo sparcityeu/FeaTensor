@@ -368,18 +368,20 @@ void find_max3 ( int * arr, int arr_size, int * max_arr ) {
 	int first, second, third, first_i, second_i, third_i;
  
     third = first = second = first_i = second_i = third_i = 0;
+	int curr;
 	
 	
 	for(int i = 0; i < arr_size; i++)
     {
-         
+         curr = arr[i];
+		 
         // If current element is
         // greater than first
-        if (arr[i] > first)
+        if (curr > first)
         {
             third = second;
             second = first;
-            first = arr[i];
+            first = curr;
 			
 			third_i = second_i;
             second_i = first_i;
@@ -388,17 +390,17 @@ void find_max3 ( int * arr, int arr_size, int * max_arr ) {
  
         // If arr[i] is in between first
         // and second then update second
-        else if (arr[i] > second && arr[i] != first)
+        else if (curr > second )
         {
             third = second;
-            second = arr[i];
+            second = curr;
 			
 			third_i = second_i;
             second_i = i;
         }
  
-        else if (arr[i] > third && arr[i] != second){
-            third = arr[i];
+        else if (curr > third ){
+            third = curr;
 			third_i = i;
 		}
     }
