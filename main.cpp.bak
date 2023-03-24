@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	int ask_csv = 0;
 	int only3d = 1;
 
-	while ((opt = getopt(argc, argv, "i:o:m:b:c:d")) != -1) {
+	while ((opt = getopt(argc, argv, "i:o:m:b:c:d:")) != -1) {
         switch (opt) {
         case 'i':
             filename = strdup(optarg);
@@ -31,11 +31,11 @@ int main(int argc, char *argv[])
 			out_file_name = optarg;
             break;
 		case 'm':
-            if(strncmp(optarg, "fragment", 8) == 0)
-				method_choice = 0;
 			else if(strncmp(optarg, "map", 3) == 0)
-				method_choice = 1;
+				method_choice = 0;
 			else if(strncmp(optarg, "sort", 4) == 0)
+				method_choice = 1;
+			else if(strncmp(optarg, "fragment", 8) == 0)
 				method_choice = 2;
 			else if(strncmp(optarg, "hybrid", 6) == 0)
 				method_choice = 3;

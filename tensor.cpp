@@ -109,7 +109,15 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
     int *temp_cnt0 = (int *)safe_calloc(I0, sizeof(int));
 
     // timer * temp_cnt0_tm = timer_start("time_temp_cnt0");
-    timer *level0_tm = timer_start("time_level0");
+    // timer *level0_tm = timer_start("time_level0");
+	
+	// char name_string[30];
+	// sprintf(name_string, "time_fragment_mode_%d_%d", mode_order1, mode_order2);
+	// timer *mode_tm = timer_start(name_string);
+	
+	
+	// std::string str = "time_fragment_mode";
+	// const char * c = str.c_str();
 
     // #pragma omp parallel for
     for (i = 0; i < nnz; i++)
@@ -178,7 +186,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
         order0[temp_loc0[coo_ind0]++] = k;
     }
     // timer_end(order0_tm);
-    timer_end(level0_tm);
+    // timer_end(level0_tm);
 
     free(temp_loc0);
 
@@ -192,7 +200,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
     int *size1_start = (int *)safe_malloc((size0 + 1) * sizeof(int));
     size1_start[0] = 0;
 
-    timer *level1_tm = timer_start("time_level1");
+    // timer *level1_tm = timer_start("time_level1");
 
 // double time_tmp_cnt1=0;
 
@@ -264,7 +272,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
         // timer_end(sub_level1_tm);
     }
 
-    timer_end(level1_tm);
+    // timer_end(level1_tm);
 
     // free(tmp_cnt1);
     free(order0);
@@ -313,6 +321,8 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
 
     fragment->size0 = size0;
     fragment->size1 = size1;
+	
+	// timer_end(mode_tm);
 
     return fragment;
 }
@@ -669,14 +679,14 @@ mode_based_features *extract_features(tensor *T, enum EXTRACTION_METHOD method)
 {
     switch (method)
     {
-    case FRAGMENT:
-        return extract_features_fragment(T);
-        break;
     case MAP:
         return extract_features_modes(T);
         break;
     case SORT:
         return extract_features_sort(T);
+        break;
+	case FRAGMENT:
+        return extract_features_fragment(T);
         break;
 	case HYBRID:
 		return extract_features_hybrid(T);
@@ -957,7 +967,11 @@ mode_based_features *extract_features_sort(tensor *T)
     for (int mode = 0; mode < mode_num; mode++)
     {
 		// printf ("before mode %d \n", mode);
-		timer *arrays_tm_ind = timer_start("time_find_arrays_individual ");
+		
+		char name_string[30];
+		sprintf(name_string, "time_sort_mode_%d", mode);
+		
+		timer *arrays_tm_ind = timer_start(name_string);
         sort_tensor(T, 1);
 
         int slice_offset = calculate_nnz_per_slice_sort(T, nnzPerSlice + slice_offsets[mode], &(adjNnzPerSlice));
@@ -1021,9 +1035,9 @@ mode_based_features *extract_features_sort(tensor *T)
 	
 	TENSORSIZE_T curr_all_cnt;
 
-// #pragma omp parallel
+#pragma omp parallel
     {
-// #pragma omp for nowait
+#pragma omp for nowait
         for (int i = 0; i < num_modes_for_slices; i++)
         {
 			int curr_dim = (i+1)% num_modes_for_slices;
@@ -1049,7 +1063,7 @@ mode_based_features *extract_features_sort(tensor *T)
 			extract_final_mode(slice_mode_features[curr_dim], curr_all_cnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
 		}
 		
-		// #pragma omp for nowait
+		#pragma omp for nowait
         for (int i = 0; i < num_modes_for_slices; i++)
         {
 			int curr_dim = (i+1)% num_modes_for_slices;
@@ -1075,7 +1089,7 @@ mode_based_features *extract_features_sort(tensor *T)
 			extract_final_mode(fps_mode_features[curr_dim], curr_all_cnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
         }
 
-// #pragma omp for
+#pragma omp for
         for (int i = 0; i < num_modes_for_fibers; i++)
         {
 
@@ -1117,7 +1131,7 @@ mode_based_features *extract_features_fragment(tensor *T)
     dim2_tensor_fragment **fragments = (dim2_tensor_fragment **)safe_malloc(3 * sizeof(dim2_tensor_fragment *));
     
  
-    timer *fragment_i_tm = timer_start("timer_coo2fragment");
+    timer *fragment_i_tm = timer_start("time_coo2fragment_all_modes");
     
     omp_set_nested(1);
     
@@ -1125,12 +1139,14 @@ mode_based_features *extract_features_fragment(tensor *T)
     for (int i = 0; i < 3; i++)
     {
 		// printf("\n%d \t\t :  Mode number \n", i);
+		char name_string[40];
+		sprintf(name_string, "time_fragment_mode_%d_%d", i, (i + 1) % 3);
+		timer *mode_tm = timer_start(name_string);
         fragments[i] = coo2fragment(T, i, (i + 1) % 3);
+		timer_end(mode_tm);
     }
     timer_end(fragment_i_tm);
-    printf("\n");
-
-
+  
     TENSORSIZE_T num_slices = calculate_num_slices(order, dim);
     TENSORSIZE_T num_fibers = calculate_num_fibers(order, dim);
 
@@ -1193,9 +1209,9 @@ if(PRINT_DEBUG){
 		printf("]\n nnzFiberCnt : %d \n", nnzFiberCnt);
 	}
 
-// #pragma omp parallel
+#pragma omp parallel
     {
-// #pragma omp for nowait
+#pragma omp for nowait
         for (int i = 0; i < 3; i++)
         {
             slice_mode_features[i] = new mode_features();
@@ -1208,7 +1224,7 @@ if(PRINT_DEBUG){
             extract_final_mode(slice_mode_features[i], slice_mode_features[i]->all_cnt, nnzPerSlice + slice_offsets[i], fragments[i]->size0);
         }
 
-// #pragma omp for nowait
+#pragma omp for nowait
         for (int i = 0; i < 3; i++)
         {
             fps_mode_features[i] = new mode_features();
@@ -1221,7 +1237,7 @@ if(PRINT_DEBUG){
 			extract_final_mode(fps_mode_features[i], fps_mode_features[i]->all_cnt, fibersPerSlice + slice_offsets[i], fragments[i]->size0);
         }
 
-// #pragma omp for
+#pragma omp for
         for (int i = 0; i < 3; i++)
         {
 			int curr_dim = (i+2)%3;
@@ -1288,23 +1304,31 @@ mode_based_features *extract_features_hybrid(tensor *T)
 		
 		if (curr_fiber_cnt > 1000000000)
 		{		
-			timer *sort_mode_tm = timer_start("sort_mode_time");
+	
+			char name_string[30];
+			sprintf(name_string, "time_sort_mode_%d", mode);
+			timer *sort_mode_tm = timer_start(name_string);
 			
 			sort_tensor(T, 1);
-			
-			timer_end(sort_mode_tm);
+
 			// printf("Sort is finished. \n");
 
 			slice_offset = calculate_nnz_per_slice_sort(T, nnzPerSlice + slice_offsets[mode], &(adjNnzPerSlice));
 			fiber_offset = calculate_nnz_per_fiber_sort(T, nnzPerFiber + fiber_offsets[mode], &(adjNnzPerFiber));
 			fps_offset = calculate_fibers_per_slice_sort(T, fibersPerSlice + fps_offsets[mode], &(adjFibersPerSlice));
+			
+			timer_end(sort_mode_tm);
 
 		}
 		else{
+			int next_mode = (real_mode+1) %3;
 			
-			timer *frag_mode_tm = timer_start("frag_mode_time");
+			char name_string[40];
+			sprintf(name_string, "time_fragment_mode_%d_%d", real_mode, next_mode);
 			
-			dim2_tensor_fragment *fragment = coo2fragment(T, real_mode, (real_mode + 1) % 3);
+			timer *frag_mode_tm = timer_start(name_string);
+			
+			dim2_tensor_fragment *fragment = coo2fragment(T, real_mode, next_mode);
 			
 			timer_end(frag_mode_tm);
 			// printf("Fragment is finished. \n");
@@ -1322,7 +1346,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			for (int j = 0; j < fps_offset; j++)
 				fibersPerSlice[fps_offsets[mode] + j] = fragment->size1[j];
 
-			real_mode = (real_mode+1) %3;
+			real_mode = next_mode;
 			
 		}
 		
@@ -1375,9 +1399,9 @@ mode_based_features *extract_features_hybrid(tensor *T)
 		printf("]\n nnzFiberCnt : %d \n", features->nnzFiberCnt);
 	}
 
-// #pragma omp parallel
+#pragma omp parallel
     {
-// #pragma omp for nowait
+#pragma omp for nowait
         for (int i = 0; i < 3; i++)
         {
 			int curr_dim = (i+1)%3;
@@ -1390,7 +1414,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
             extract_final_mode(slice_mode_features[curr_dim], features->nnzSliceCnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
         }
 
-// #pragma omp for nowait
+#pragma omp for nowait
         for (int i = 0; i < 3; i++)
         {
 			int curr_dim = (i+1)%3;
@@ -1403,7 +1427,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
             extract_final_mode(fps_mode_features[curr_dim], features->nnzSliceCnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
         }
 
-// #pragma omp for
+#pragma omp for
         for (int i = 0; i < 3; i++)
         {
             fiber_mode_features[i] = new mode_features();

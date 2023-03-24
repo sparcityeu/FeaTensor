@@ -242,9 +242,9 @@ namespace
 
 enum EXTRACTION_METHOD
 {
-    FRAGMENT,
     MAP,
     SORT,
+	FRAGMENT,
 	HYBRID,
     COO //unused yet.
 };
