@@ -12,6 +12,7 @@ To compile and run our main code, use following commands, replace placeholders w
 ```
 make
 ./featen -i [input-tensor-path] -o [output-file-path] -m [method-choice (optional)]
+ex: ./featen -i ../data_tensors/small_test.tns -o ../features/small_test_feat.txt
 ```
 
 ### **Extraction Algorithms**
