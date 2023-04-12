@@ -129,8 +129,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
 
     int size0 = 0;
 
-#pragma omp parallel for reduction(+ \
-                                   : size0)
+#pragma omp parallel for reduction(+ : size0)
     for (i = 0; i < I0; i++)
     {
         if (temp_cnt0[i] > 0)
@@ -578,8 +577,7 @@ double calculate_std(int *arr, int arr_size, TENSORSIZE_T num_elems, double mean
 
     double sqr_sum = 0;
 
-#pragma omp parallel for reduction(+ \
-                                   : sqr_sum)
+#pragma omp parallel for reduction(+ : sqr_sum)
     for (int i = 0; i < arr_size; i++)
     {
         // if(arr[i]==0) continue;	// TT: already all entries nonzero !
@@ -691,7 +689,7 @@ mode_based_features *extract_features(tensor *T, enum EXTRACTION_METHOD method)
 	case HYBRID:
 		return extract_features_hybrid(T);
     default:
-        return extract_features_modes(T);
+        return extract_features_sort(T);
         break;
     }
 }

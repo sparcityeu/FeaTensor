@@ -21,6 +21,9 @@ int main(int argc, char *argv[])
 	int is_binary = 0;
 	int ask_csv = 0;
 	int only3d = 1;
+	
+	if (argc <= optind)
+		printusage();
 
 	while ((opt = getopt(argc, argv, "i:o:m:b:c:d:")) != -1) {
         switch (opt) {
@@ -31,7 +34,7 @@ int main(int argc, char *argv[])
 			out_file_name = optarg;
             break;
 		case 'm':
-			else if(strncmp(optarg, "map", 3) == 0)
+			if(strncmp(optarg, "map", 3) == 0)
 				method_choice = 0;
 			else if(strncmp(optarg, "sort", 4) == 0)
 				method_choice = 1;

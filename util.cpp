@@ -41,3 +41,17 @@ void print_vec(int n, int *vec, const char *name)
 		printf("%d ", vec[i]);
 	printf("\n-----------------------------\n");
 }
+
+void printusage()
+{
+	printf("usage: featen [options] \n");
+	
+	printf("\t-i input : input tensor path\n");
+	printf("\t-o out : feature info output file\n");
+	printf("\t-m method : feature extraction method\n\t\tOptions:{map, sort, fragment, hybrid}\n");
+	printf("\t-c csv_out : feture out file to be in csv (1) or json (0) format \n");
+	printf("\t-d only3d : features to be in only 3 dim (1) or N-dim (0) \n");
+	
+
+	exit(1);
+}

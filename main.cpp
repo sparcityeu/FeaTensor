@@ -19,8 +19,11 @@ int main(int argc, char *argv[])
 	char *filename = NULL;
 	char *out_file_name = NULL;
 	int is_binary = 0;
-	int ask_csv = 0;
+	int ask_csv = 1;
 	int only3d = 1;
+	
+	if (argc <= optind)
+		printusage();
 
 	while ((opt = getopt(argc, argv, "i:o:m:b:c:d:")) != -1) {
         switch (opt) {

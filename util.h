@@ -24,6 +24,7 @@ void timer_end(timer *tm);
 
 void print_trace(void);
 void print_vec(int n, int *vec, const char *name);
+void printusage();
 
 static inline void *safe_malloc(size_t size)
 {
