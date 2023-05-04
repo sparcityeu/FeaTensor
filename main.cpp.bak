@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	char *filename = NULL;
 	char *out_file_name = NULL;
 	int is_binary = 0;
-	int ask_csv = 0;
+	int ask_csv = 1;
 	int only3d = 1;
 	
 	if (argc <= optind)
@@ -115,17 +115,18 @@ int main(int argc, char *argv[])
 	
 	fclose(file_ptr);
 	
-	printf("\ntensor : \t%s \n", filename);
-	printf("order : \t%d \n", order);
-	printf("dim : ");
+	printf(" %s (tensor) || ", filename);
+	printf(" %d (order) || ", order);
 	for (int i = 0; i <order; i++){
-		printf("\t%d", T->dim[i]);
+		printf("\t %d", T->dim[i]);
 	}
+	printf(" (dim) || ");
 	
-	printf("\nis_binary : \t%d \n", is_binary);
-	printf("extraction_method : \t%d \n", method_choice);
-	printf("omp_max_threads : \t%d \n", omp_get_max_threads());
+	// printf("\nis_binary : \t%d \n", is_binary);
+	printf(" %d (extraction_method) || ", method_choice);
+	printf(" %d (max_threads) || ", omp_get_max_threads());
 	
+	T->org_dim = (int *)safe_malloc(order * sizeof(int));
 	
 	timer_end(file_read_tm);
 	
@@ -133,10 +134,9 @@ int main(int argc, char *argv[])
 	
 		tensor *T_3D = create_tensor(3, nnz);
 		T_3D->tensor_name = filename;
-		T_3D->org_order = T->order;
+		T_3D->org_dim = (int *)safe_malloc(order * sizeof(int));
 		
 		tensor_to_3d (T, T_3D);
-		
 		
 		timer *extract_feat_tm = timer_start("time_extract_features_total");
 		mode_based_features *features = extract_features(T_3D, static_cast<EXTRACTION_METHOD>(method_choice));	
@@ -145,10 +145,10 @@ int main(int argc, char *argv[])
 		std::ofstream out_file(out_file_name);
 
 		if( ask_csv ){
-			out_file << all_mode_features_to_csv(features, T_3D->order);
+			out_file << all_mode_features_to_csv(features, T_3D);
 		}
 		else{
-			out_file << all_mode_features_to_json(features, T_3D->order);
+			out_file << all_mode_features_to_json(features, T_3D);
 		}
 	}
 	
@@ -163,12 +163,13 @@ int main(int argc, char *argv[])
 		std::ofstream out_file(out_file_name);
 
 		if( ask_csv ){
-			out_file << all_mode_features_to_csv(features, T->order);
+			out_file << all_mode_features_to_csv(features, T);
 		}
 		else{
-			out_file << all_mode_features_to_json(features, T->order);
+			out_file << all_mode_features_to_json(features, T);
 		}
 	}
 	
+	printf(" \n ");
 	return 0;
 }

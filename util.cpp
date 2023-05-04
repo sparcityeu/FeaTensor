@@ -14,7 +14,7 @@ timer *timer_start(const char *name)
 void timer_end(timer *tm)
 {
 	tm->end = omp_get_wtime();
-	printf("%.7f \t\t : %s \n", (tm->end - tm->start), tm->name);
+	printf(" %.7f (%s) || ", (tm->end - tm->start), tm->name);
 	free(tm->name);
 	free(tm);
 }

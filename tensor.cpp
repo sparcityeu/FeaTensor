@@ -351,6 +351,11 @@ void tensor_to_3d (tensor *T, tensor * T3d){
 	
 	int max_arr [6];
 	
+	T3d->org_order = T->order;
+	for (i = 0; i <T->order; i++){
+		T3d->org_dim[i] = T->dim[i];
+	}
+	
 	find_max3 ( T->dim, T->order, max_arr );
 	
 	// update dim of T3d
@@ -362,8 +367,7 @@ void tensor_to_3d (tensor *T, tensor * T3d){
 		}
 	}
 	
-	for (int i = 0; i < T->order; i++)
-    {
+	for (int i = 0; i < T->order; i++){
         free(T->indices[i]);
     }
 	free(T->indices);
@@ -1650,11 +1654,13 @@ mode_based_features *extract_features_modes(tensor *T)
 }
 
 
-std::string all_mode_features_to_json(mode_based_features *features, int order)
+std::string all_mode_features_to_json(mode_based_features *features, tensor *T)
 {
     std::string result = "{";
 
     int num_modes_for_slices, num_modes_for_fibers;
+	
+	int order = T->order;
 
     num_modes_for_slices = comb(order, 2);
     num_modes_for_fibers = order;
@@ -1679,13 +1685,15 @@ std::string all_mode_features_to_json(mode_based_features *features, int order)
     for (int i = 0; i < num_modes_for_slices; i++){
         result += mode_features_to_json(features->fps[i]) + ",";
 	}
+	
+	result += "\"ORG_DIM\":" + org_dim_to_json(T) ;
 
     result += "]}\n";
 
     return result;
 }
 
-std::string all_mode_features_to_csv(mode_based_features *features, int order)
+std::string all_mode_features_to_csv(mode_based_features *features, tensor *T)
 {
     // std::string result = "BASE ";
 	
@@ -1696,6 +1704,8 @@ std::string all_mode_features_to_csv(mode_based_features *features, int order)
 	// result +=  base_features_to_csv(features->base) ;
 	
 	std::string result =  base_features_to_csv(features->base) ;
+	
+	int order = T->order;
 
     int num_modes_for_slices = comb(order, 2);
     int num_modes_for_fibers = order;
@@ -1730,6 +1740,8 @@ std::string all_mode_features_to_csv(mode_based_features *features, int order)
         result += mode_features_to_csv(features->fps[i]) ;
 	}
 
+	result += "\"ORG_DIM\":" + org_dim_to_csv(T) ;
+	
     result += "\n";
 	
 	if (PRINT_HEADER){
@@ -1857,6 +1869,17 @@ std::string mode_features_to_csv_fibers(mode_features *features)
     return std::string(buffer, buffer + strlen(buffer));
 }
 
+std::string org_dim_to_json(tensor *T){
+	char buffer[1000];
+    buffer[0] = '\0';
+	
+	for (int i = 0; i <T->org_order; i++){
+		sprintf(buffer + strlen(buffer), "\"org_dim_%d\" : %d, ", i, T->org_dim[i]);
+	}
+	
+	return std::string(buffer, buffer + strlen(buffer));
+}
+
 std::string base_features_to_json(base_features *features)
 {
     char buffer[1000];
@@ -1891,6 +1914,20 @@ std::string base_features_to_json(base_features *features)
     return std::string(buffer, buffer + strlen(buffer));
 }
 
+
+std::string org_dim_to_csv(tensor *T){
+	char buffer[1000];
+    buffer[0] = '\0';
+	
+	for (int i = 0; i <T->org_order; i++){
+		sprintf(buffer + strlen(buffer), " \t %d ", T->org_dim[i]);
+		if (PRINT_HEADER){
+			printf(" org_dim_%d ", i);
+		}
+	}
+	
+	return std::string(buffer, buffer + strlen(buffer));
+}
 
 std::string base_features_to_csv(base_features *features)
 {

@@ -269,6 +269,7 @@ typedef struct
     double *values;
     int **indices;
     int *dim;
+	int *org_dim;
     int order;
 	int org_order;
     int nnz;
@@ -382,15 +383,18 @@ mode_based_features *extract_features_hybrid(tensor *T);
 mode_based_features *extract_features_modes(tensor *T);
 
 std::string tensor_features_to_json(tensor_features *features);
-std::string all_mode_features_to_json(mode_based_features *features, int order);
+std::string all_mode_features_to_json(mode_based_features *features, tensor *T);
 std::string mode_features_to_json(mode_features *features);
 std::string mode_features_to_json_fibers(mode_features *features);
 std::string base_features_to_json(base_features *features);
 
-std::string all_mode_features_to_csv(mode_based_features *features, int order);
+std::string all_mode_features_to_csv(mode_based_features *features, tensor *T);
 std::string mode_features_to_csv(mode_features *features);
 std::string mode_features_to_csv_fibers(mode_features *features);
 std::string base_features_to_csv(base_features *features);
+
+std::string org_dim_to_json(tensor *T);
+std::string org_dim_to_csv(tensor *T);
 
 void print_tensor_features(tensor_features *features);
 void print_csr_tensor(csr_tensor *T);
