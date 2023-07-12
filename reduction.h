@@ -4,7 +4,7 @@
 
 int reduce_min(int *arr, TENSORSIZE_T num_elems);
 int reduce_max(int *arr, TENSORSIZE_T num_elems);
-int reduce_sum(int *arr, TENSORSIZE_T num_elems);
+TENSORSIZE_T reduce_sum(int *arr, TENSORSIZE_T num_elems);
 
 int reduce(int *arr, TENSORSIZE_T num_elems, int operation(const int, const int, const int), int initial_value);
 int reduce_2d(int **arr, int num_elems, int *num_elems_2, int operation(const int, const int, const int), int initial_value);

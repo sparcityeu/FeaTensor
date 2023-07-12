@@ -103,12 +103,12 @@ int reduce_max(int *arr, TENSORSIZE_T num_elems)
     return reduction_val;
 }
 
-int reduce_sum(int *arr, TENSORSIZE_T num_elems)
+TENSORSIZE_T reduce_sum(int *arr, TENSORSIZE_T num_elems)
 {
     if (num_elems <= 1)
         return 0;
 
-    int reduction_val = 0;
+    TENSORSIZE_T reduction_val = 0;
 
 #pragma omp parallel for reduction(+ \
                                    : reduction_val)

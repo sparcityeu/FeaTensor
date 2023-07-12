@@ -11,8 +11,20 @@ To compile and run our main code, use following commands, replace placeholders w
 
 ```
 make
+
+USAGE: 
+featen [options]                                                                                                                                               
+-i input : input tensor path                                                                                                                                  
+-o out : feature info output file                                                                                                                             
+-m method : feature extraction method. Options:{map, sort, fragment, hybrid}                                                                                                                 
+-c csv_out : feture out file to be in csv (1) or json (0) format                                                                                              
+-d only3d : features to be in only 3 dim (1) or N-dim (0)
+
+SIMPLEST USAGE:
 ./featen -i [input-tensor-path] -o [output-file-path] -m [method-choice (optional)]
-ex: ./featen -i ../data_tensors/small_test.tns -o ../features/small_test_feat.txt
+
+EXAMPLE: 
+./featen -i ../data_tensors/sample_small_3D.tns -o ../features/sample_small_3D_feat.txt
 ```
 
 ### **Extraction Algorithms**

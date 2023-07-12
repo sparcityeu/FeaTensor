@@ -337,9 +337,9 @@ struct mode_features
 {
 	int ignored_dim1;
     int ignored_dim2;
-	TENSORSIZE_T all_cnt;
+	TENSORSIZE_T all_cnt, sum;
     int nz_cnt, max, min, dev;
-    long avg;
+    double avg;
     double cv;
     double stDev;
 	double avg_onlynz;
