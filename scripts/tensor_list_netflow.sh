@@ -1,0 +1,21 @@
+$1 	netflow-day-02	$2 
+$1 	netflow-day-04	$2 
+$1 	netflow-day-09	$2 
+$1 	netflow-day-10	$2 
+$1 	netflow-day-11	$2 
+$1 	netflow-day-12	$2 
+$1 	netflow-day-13	$2 
+$1 	netflow-day-16	$2 
+$1 	netflow-day-17	$2 
+$1 	netflow-day-18	$2 
+$1 	netflow-day-20	$2 
+$1 	netflow-day-23	$2 
+$1 	netflow-day-24	$2 
+$1 	netflow-day-25	$2 
+$1 	netflow-day-27	$2 
+$1 	netflow-day-30	$2 
+$1 	netflow-day-32	$2 
+$1 	netflow-day-33	$2 
+$1 	netflow-day-36	$2 
+$1 	netflow-day-38	$2 
+
