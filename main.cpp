@@ -15,12 +15,12 @@ int main(int argc, char *argv[])
 	setvbuf(stdout, NULL, _IONBF, 0);
 	
 	int opt;
-	int method_choice = 1;
+	int method_choice = 0; //default : map
 	char *filename = NULL;
 	char *out_file_name = NULL;
 	int is_binary = 0;
 	int ask_csv = 1;
-	int only3d = 1;
+	int only3d = 0; // default : n-dim
 	
 	if (argc <= optind)
 		printusage();

@@ -558,7 +558,7 @@ TENSORSIZE_T calculate_num_fibers(int order, int *dim)
 }
 
 
-/* sparsity in percent */
+/* sparsity */
 double calculate_sparsity(int nnz, int order, int *dim)
 {
     TENSORSIZE_T total_size = 1;
@@ -1692,7 +1692,7 @@ std::string all_mode_features_to_json(mode_based_features *features, tensor *T)
         result += mode_features_to_json(features->fps[i]) + ",";
 	}
 	
-	result += "\"ORG_DIM\":" + org_dim_to_json(T) ;
+	// result += "\"ORG_DIM\":" + org_dim_to_json(T) ;
 
     result += "]}\n";
 
@@ -1746,7 +1746,7 @@ std::string all_mode_features_to_csv(mode_based_features *features, tensor *T)
         result += mode_features_to_csv(features->fps[i]) ;
 	}
 
-	result += "\"ORG_DIM\":" + org_dim_to_csv(T) ;
+	// result += "\"ORG_DIM\":" + org_dim_to_csv(T) ;
 	
     result += "\n";
 	
