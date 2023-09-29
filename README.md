@@ -10,18 +10,19 @@ This is a repository that provides different implementations for extracting the 
 To compile and run our main code, use following commands, replace placeholders with corresponding values:
 
 ```
+TO COMPILE:
 make
 
 USAGE: 
 featen [options]                                                                                                                                               
 -i input : input tensor path                                                                                                                                  
--o out : feature info output file                                                                                                                             
--m method : feature extraction method. Options:{map, sort, fragment, hybrid}                                                                                                                 
--c csv_out : feture out file to be in csv (1) or json (0) format                                                                                              
--d only3d : features to be in only 3 dim (1) or N-dim (0)
+-o out : feature info output file                                                                                                                            
+-m method : feature extraction method. Options:{map, sort, fragment, hybrid}      [DEFAULT : map]                                                                                                            
+-c csv_out : feture out file to be in csv (1) or json (0) format  [DEFAULT : 1]                                                                                        
+-d only3d : features to be in only 3 dim (1) or N-dim (0) [DEFAULT : 0] 
 
 SIMPLEST USAGE:
-./featen -i [input-tensor-path] -o [output-file-path] -m [method-choice (optional)]
+./featen -i [input-tensor-path] -o [output-file-path]
 
 EXAMPLE: 
 ./featen -i ../data_tensors/sample_small_3D.tns -o ../features/sample_small_3D_feat.txt
@@ -35,12 +36,13 @@ To use one, write the choice number of the algorithm as parameter when running m
 
 | Algorithm | Description | 
 | --- | ---------------|
+
+| MAP | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. ***|
+| SORT | Inıtially sorts all the modes to make the calculation. |
 | FRAGMENT | For each mode, sorts the tensor except the last dimension, calculates feature after slightly modifying this structure. |
-| MAP | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
-| SORT | Sorts all the modes to make the calculation. ***|
 | HYBRID | Combination of sort and fragment |
 
-*** SORT is the default feature extraction method when no choice is provided.
+*** MAP is the default feature extraction method when no choice is provided. This is the only method that works for n-dim case. Others are valid for 3-dim case.
 
 ### **Feature Set**
 

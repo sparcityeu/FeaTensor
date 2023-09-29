@@ -905,9 +905,13 @@ void calculate_fibers_per_slice_map(tensor *T, int fiber_id, FiberMap *nnz_per_f
 
 void calculate_nnz_per_fiber_and_fibers_per_slice_map(tensor *T, int fiber_id, FiberMap *nnz_per_fiber_m, SliceMap **fibers_per_slice_m)
 {
-    int s = T->order - 2 - fiber_id;
+	int order = T->order;
 	
-	// printf("\nfiber_id: %d\n", fiber_id); 
+	fiber_id = order - 1 - fiber_id; //added for reverse fps order
+	
+    int s = order - 2 - fiber_id;
+	
+	// printf("\nfiber_id: %d, ", fiber_id); 
 	// printf("s: %d\n", s);
 
     for (int j = 0; j < T->nnz; j++)
@@ -917,20 +921,23 @@ void calculate_nnz_per_fiber_and_fibers_per_slice_map(tensor *T, int fiber_id, F
 		// printf("---------------------\n");
 		// printf("j: %d\n", j);
 
-        if (first)
-        {
-			// printf("IT IS FIRST !\n");
-            for (int z = fiber_id + 1; z < T->order; z++)
-            {
-                int fps_index = T->order - 1 - z + (s * (s + 1)) / 2;
-                fibers_per_slice_m[fps_index]->increment(j);
+		if (first)
+		{
+			for (int z = fiber_id + 1; z < order; z++)
+			{
+				int fps_index = order - 1 - z + (s * (s + 1)) / 2;
+			
+				// int s = floor((sqrt(1 + 8 * i) - 1.0) / 2.0);
+				// int fps_index = T->order - 2 - s;
 				
-				// printf("z: %d\n", z);
+				fibers_per_slice_m[fps_index]->increment(j);
+				
+				// int ignored_dim_2 = T->order - 2 - s;
+				// int ignored_dim_1 = T->order - 1 - i + (s * (s + 1)) / 2;
+		
+				// printf("z: %d, ", z);
 				// printf("fps_index: %d\n", fps_index);
-            }
-        }
-		else{
-			// printf("NOT first !\n");
+			}
 		}
     }
 }
@@ -1498,8 +1505,12 @@ mode_based_features *extract_features_modes(tensor *T)
     {
         int s = floor((sqrt(1 + 8 * i) - 1.0) / 2.0);
 
-        int ignored_dim_1 = T->order - 2 - s;
-        int ignored_dim_2 = T->order - 1 - i + (s * (s + 1)) / 2;
+		// edited part. 
+        int ignored_dim_1 = s+1;
+        int ignored_dim_2 = i - (s * (s + 1)) / 2;
+		
+		// int ignored_dim_1 = T->order - 2 - s;
+        // int ignored_dim_2 = T->order - 1 - i + (s * (s + 1)) / 2;
 		
 		// printf("---------------------\n");
 		// printf("i: %d\n", i);
