@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 	std::ifstream fin(filename);
 
 	// Declare variables: (check the types here)
-	int nnz = 0;
+	TENSORSIZE_T nnz = 0;
 	int order = 0;
 	if (!fin.is_open())
 	{

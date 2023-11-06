@@ -272,7 +272,7 @@ typedef struct
 	int *org_dim;
     int order;
 	int org_order;
-    int nnz;
+    TENSORSIZE_T nnz;
 } tensor;
 
 typedef struct
@@ -283,7 +283,7 @@ typedef struct
 
     int *dim;
     int order;
-    int nnz;
+    TENSORSIZE_T nnz;
 
 } csr_tensor;
 
@@ -304,17 +304,17 @@ typedef struct
 
     int *dim;
     int order;
-    int nnz;
+    TENSORSIZE_T nnz;
 } csf_tensor;
 
 typedef struct
 {
-    TENSORSIZE_T sliceCnt, fiberCnt;
+    TENSORSIZE_T sliceCnt, fiberCnt, nnz;
     double sparsity, avgNnzPerFiber, avgNnzPerSlice, avgFibersPerSlice;
     double cvNnzPerFiber, cvNnzPerSlice, cvFibersPerSlice;
     double stDevNnzPerSlice, stDevNnzPerFiber, stDevFibersPerSlice;
 
-    int nnzSliceCnt, nnzFiberCnt, nnz;
+    int nnzSliceCnt, nnzFiberCnt;
     int maxNnzPerSlice, minNnzPerSlice, devNnzPerSlice;
     int maxNnzPerFiber, minNnzPerFiber, devNnzPerFiber;
     int maxFibersPerSlice, minFibersPerSlice, devFibersPerSlice;
@@ -328,9 +328,9 @@ struct base_features
 	int *dim;
     int order;
 	int org_order;
-    TENSORSIZE_T sliceCnt, fiberCnt;
+    TENSORSIZE_T sliceCnt, fiberCnt, nnz;
     double sparsity;
-    int nnzSliceCnt, nnzFiberCnt, nnz;
+    int nnzSliceCnt, nnzFiberCnt;
 };
 
 struct mode_features
@@ -360,9 +360,9 @@ void sort_tensor(tensor *T, int mode = 0);
 csr_tensor *coo2csr(tensor *T);
 dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2);
 
-tensor *create_tensor(int order, int nnz);
-tensor *read_tensor(FILE *file_ptr, int order, int nnz);
-tensor *read_tensor_binary(FILE *file_ptr, int order, int nnz);
+tensor *create_tensor(int order, TENSORSIZE_T nnz);
+tensor *read_tensor(FILE *file_ptr, int order, TENSORSIZE_T nnz);
+tensor *read_tensor_binary(FILE *file_ptr, int order, TENSORSIZE_T nnz);
 
 void tensor_to_3d (tensor *T, tensor * T3d);
 void find_max3 ( int * arr, int arr_size, int *max_arr );
@@ -372,7 +372,7 @@ TENSORSIZE_T calculate_num_fibers(int order, int *dim);
 
 void calculate_nnzPerSlice_fragment(dim2_tensor_fragment **fragments, int num_fragments, int *nnzPerSlice);
 
-double calculate_sparsity(int nnz, int order, int *dim);
+double calculate_sparsity(TENSORSIZE_T nnz, int order, int *dim);
 double calculate_std(int *arr, int arr_size, TENSORSIZE_T num_elems, double mean);
 
 mode_based_features *extract_features(tensor *T, enum EXTRACTION_METHOD method);

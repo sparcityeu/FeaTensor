@@ -50,7 +50,7 @@ void sort_tensor(tensor *T, int mode)
 
     std::vector<std::tuple<std::vector<int>, double>> sort_vec;
 
-    for (int i = 0; i < T->nnz; i++)
+    for (TENSORSIZE_T i = 0; i < T->nnz; i++)
     {
         int value = (T->values != nullptr) ? T->values[i] : 0;
 
@@ -73,7 +73,7 @@ void sort_tensor(tensor *T, int mode)
                   return false;
               });
 
-    for (int i = 0; i < T->nnz; i++)
+    for (TENSORSIZE_T i = 0; i < T->nnz; i++)
     {
         auto &t = sort_vec[i];
         for (int j = 0; j < T->order; j++)
@@ -97,12 +97,12 @@ void sort_tensor(tensor *T, int mode)
 
 dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
 {
-    int i, j, k;
+    // int i, j, k;
 
     int I0 = T->dim[mode_order1];
     int I1 = T->dim[mode_order2];
 
-    int nnz = T->nnz;
+    TENSORSIZE_T nnz = T->nnz;
     int *i0 = T->indices[mode_order1];
     int *i1 = T->indices[mode_order2];
 
@@ -120,7 +120,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
 	// const char * c = str.c_str();
 
     // #pragma omp parallel for
-    for (i = 0; i < nnz; i++)
+    for (TENSORSIZE_T i = 0; i < nnz; i++)
     {
         // printf(" %d ", omp_get_thread_num());
         temp_cnt0[i0[i]]++;
@@ -130,7 +130,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
     int size0 = 0;
 
 #pragma omp parallel for reduction(+ : size0)
-    for (i = 0; i < I0; i++)
+    for (int i = 0; i < I0; i++)
     {
         if (temp_cnt0[i] > 0)
         {
@@ -146,9 +146,9 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
     int *strt0 = (int *)safe_malloc((size0 + 1) * sizeof(int));
     strt0[0] = 0;
 
-    j = 0;
+    int j = 0;
     // #pragma omp parallel for
-    for (i = 0; i < I0; i++)
+    for (int i = 0; i < I0; i++)
     {
         int temp_cnt0_i = temp_cnt0[i];
         if (temp_cnt0_i != 0)
@@ -170,7 +170,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
     int *temp_loc0 = (int *)safe_calloc(size_temp_loc0, sizeof(int));
 
 #pragma omp parallel for
-    for (i = 0; i < size0; i++)
+    for (int i = 0; i < size0; i++)
     {
         temp_loc0[ind0[i]] = strt0[i];
     }
@@ -179,7 +179,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
     int *order0 = (int *)safe_calloc(nnz, sizeof(int));
 
     // #pragma omp parallel for
-    for (k = 0; k < nnz; k++)
+    for (TENSORSIZE_T k = 0; k < nnz; k++)
     {
         int coo_ind0 = i0[k];
         order0[temp_loc0[coo_ind0]++] = k;
@@ -288,7 +288,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
     int *cnt1_all = (int *)safe_malloc(size1_tot * sizeof(int));
 
 #pragma omp parallel for
-    for (i = 0; i < size0; i++)
+    for (int i = 0; i < size0; i++)
     {
         int strt = size1_start[i];
         int end = size1_start[i + 1];
@@ -300,7 +300,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
         }
     }
 
-    for (i = 0; i < size0; i++)
+    for (int i = 0; i < size0; i++)
     {
         free(ind1[i]);
         free(cnt1[i]);
@@ -327,7 +327,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
 }
 
 
-tensor *create_tensor(int order, int nnz)
+tensor *create_tensor(int order, TENSORSIZE_T nnz)
 {
     tensor *T = (tensor *)safe_malloc(sizeof(tensor));
 
@@ -347,22 +347,20 @@ tensor *create_tensor(int order, int nnz)
 
 void tensor_to_3d (tensor *T, tensor * T3d){
 	
-	int i,j;
-	
 	int max_arr [6];
 	
 	T3d->org_order = T->order;
-	for (i = 0; i <T->order; i++){
+	for (int i = 0; i <T->order; i++){
 		T3d->org_dim[i] = T->dim[i];
 	}
 	
 	find_max3 ( T->dim, T->order, max_arr );
 	
 	// update dim of T3d
-	for (i=0; i<3; i++){
+	for (int i=0; i<3; i++){
 		T3d->dim [i] = max_arr[i+3] ;
 		// T3d->dim [i] = T->dim [ max_arr[i] ];
-		for (j=0; j<T3d->nnz; j++){
+		for (TENSORSIZE_T j=0; j<T3d->nnz; j++){
 			T3d->indices[i][j] = T->indices[max_arr[i]][j];
 		}
 	}
@@ -428,7 +426,7 @@ void find_max3 ( int * arr, int arr_size, int * max_arr ) {
 }
 
 
-tensor *read_tensor(FILE *file_ptr, int order, int nnz)
+tensor *read_tensor(FILE *file_ptr, int order, TENSORSIZE_T nnz)
 {
 
     size_t tensor_MAXLINE = 500; // May be inline
@@ -443,7 +441,7 @@ tensor *read_tensor(FILE *file_ptr, int order, int nnz)
 	fgets_out = fgets(line, tensor_MAXLINE, file_ptr);
 
     // read from file to tensor in COO format
-    for (int i = 0; i < nnz; i++)
+    for (TENSORSIZE_T i = 0; i < nnz; i++)
     {
         fgets_out = fgets(line, tensor_MAXLINE, file_ptr);
 
@@ -465,7 +463,7 @@ tensor *read_tensor(FILE *file_ptr, int order, int nnz)
 	// find dim
 	for (int j = 0; j < order; j++){
 		max_dim = 0;
-		for (int i = 0; i < nnz; i++){
+		for (TENSORSIZE_T i = 0; i < nnz; i++){
 			curr_ind = T->indices[j][i];
 			if(max_dim < curr_ind ){ 
 				max_dim = curr_ind ;
@@ -478,7 +476,7 @@ tensor *read_tensor(FILE *file_ptr, int order, int nnz)
 }
 
 
-tensor *read_tensor_binary(FILE *file_ptr, int order, int nnz)
+tensor *read_tensor_binary(FILE *file_ptr, int order, TENSORSIZE_T nnz)
 {
 
     size_t tensor_MAXLINE = 500; // May be inline
@@ -490,7 +488,7 @@ tensor *read_tensor_binary(FILE *file_ptr, int order, int nnz)
     char *fgets_out = NULL;
 
     // read from file to tensor in COO format
-    for (int i = 0; i < nnz; i++)
+    for (TENSORSIZE_T i = 0; i < nnz; i++)
     {
         fgets_out = fgets(line, tensor_MAXLINE, file_ptr);
 
@@ -510,7 +508,7 @@ tensor *read_tensor_binary(FILE *file_ptr, int order, int nnz)
 	// find dim
 	for (int j = 0; j < order; j++){
 		max_dim = 0;
-		for (int i = 0; i < nnz; i++){
+		for (TENSORSIZE_T i = 0; i < nnz; i++){
 			curr_ind = T->indices[j][i];
 			if(max_dim < curr_ind ){ 
 				max_dim = curr_ind ;
@@ -559,14 +557,15 @@ TENSORSIZE_T calculate_num_fibers(int order, int *dim)
 
 
 /* sparsity */
-double calculate_sparsity(int nnz, int order, int *dim)
+double calculate_sparsity(TENSORSIZE_T nnz, int order, int *dim)
 {
-    TENSORSIZE_T total_size = 1;
+	
+	double density = (nnz + 0.0) / dim[0]; 
 
-    for (int i = 0; i < order; i++)
-        total_size *= dim[i];
+    for (int i = 1; i < order; i++)
+        density =  density / dim[i];
 
-    return ((double)nnz) / total_size;
+    return density;
 }
 
 /*Calculates std for nonzeros. Discards 0 values */
@@ -753,7 +752,7 @@ int calculate_nnz_per_slice_sort(tensor *T, int *nnz_per_slice, int *adj_nnz_per
    // bool adj = false;
     int offset = 0;
 
-    for (int i = 1; i < T->nnz; i++)
+    for (TENSORSIZE_T i = 1; i < T->nnz; i++)
     {
         if (T->indices[0][i - 1] != T->indices[0][i])
         {
@@ -790,7 +789,7 @@ int calculate_nnz_per_fiber_sort(tensor *T, int *nnz_per_fiber, int *adj_nnz_per
 
 //    bool adj = false;
 
-    for (int i = 1; i < T->nnz; i++)
+    for (TENSORSIZE_T i = 1; i < T->nnz; i++)
     {
         if (T->indices[0][i - 1] != T->indices[0][i] ||
             T->indices[1][i - 1] != T->indices[1][i])
@@ -825,7 +824,7 @@ int calculate_fibers_per_slice_sort(tensor *T, int *fibers_per_slice, int *adj_f
     int offset = 0;
     //bool adj = false;
     fibers_per_slice[0] = 1;
-    for (int i = 1; i < T->nnz; i++)
+    for (TENSORSIZE_T i = 1; i < T->nnz; i++)
     {
         if (T->indices[0][i - 1] != T->indices[0][i])
         {
@@ -859,7 +858,7 @@ int calculate_fibers_per_slice_sort(tensor *T, int *fibers_per_slice, int *adj_f
 void calculate_nnz_per_slice_map(tensor *T, SliceMap *nnz_per_slice_m)
 {
 
-    for (int j = 0; j < T->nnz; j++)
+    for (TENSORSIZE_T j = 0; j < T->nnz; j++)
     {
         nnz_per_slice_m->increment(j);
     }
@@ -868,7 +867,7 @@ void calculate_nnz_per_slice_map(tensor *T, SliceMap *nnz_per_slice_m)
 void calculate_nnz_per_fiber_map(tensor *T, int fiber_id, FiberMap *nnz_per_fiber_m)
 {
 	
-    for (int j = 0; j < T->nnz; j++)
+    for (TENSORSIZE_T j = 0; j < T->nnz; j++)
     {
         nnz_per_fiber_m->increment(j);
 		
@@ -882,7 +881,7 @@ void calculate_fibers_per_slice_map(tensor *T, int fiber_id, FiberMap *nnz_per_f
 	// printf("\nfiber_id: %d\n", fiber_id); 
 	// printf("s: %d\n", s);
 
-    for (int j = 0; j < T->nnz; j++)
+    for (TENSORSIZE_T j = 0; j < T->nnz; j++)
     {
         bool first = nnz_per_fiber_m->increment(j);
 		
@@ -914,7 +913,7 @@ void calculate_nnz_per_fiber_and_fibers_per_slice_map(tensor *T, int fiber_id, F
 	// printf("\nfiber_id: %d, ", fiber_id); 
 	// printf("s: %d\n", s);
 
-    for (int j = 0; j < T->nnz; j++)
+    for (TENSORSIZE_T j = 0; j < T->nnz; j++)
     {
         bool first = nnz_per_fiber_m->increment(j);
 		
@@ -947,7 +946,7 @@ void calculate_nnz_per_fiber_and_fibers_per_slice_map(tensor *T, int fiber_id, F
 mode_based_features *extract_features_sort(tensor *T)
 {
 
-    int nnz = T->nnz;
+    TENSORSIZE_T nnz = T->nnz;
     int order = T->order;
     int *dim = T->dim;
 
@@ -1139,7 +1138,7 @@ mode_based_features *extract_features_sort(tensor *T)
 // TT: TO-DO : Correct cnt input to extract_final_mode !
 mode_based_features *extract_features_fragment(tensor *T)
 {
-    int nnz = T->nnz;
+    TENSORSIZE_T nnz = T->nnz;
     int order = T->order;
     int *dim = T->dim;
 
@@ -1280,7 +1279,7 @@ if(PRINT_DEBUG){
 mode_based_features *extract_features_hybrid(tensor *T)
 {
 
-    int nnz = T->nnz;
+    TENSORSIZE_T nnz = T->nnz;
     int order = T->order;
     int *dim = T->dim;
 
@@ -1468,7 +1467,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
 
 mode_based_features *extract_features_modes(tensor *T)
 {
-    int nnz = T->nnz;
+    TENSORSIZE_T nnz = T->nnz;
     int order = T->order;
     int *dim = T->dim;
 
@@ -1918,7 +1917,7 @@ std::string base_features_to_json(base_features *features)
 		sprintf(buffer + strlen(buffer), "\"dim_%d\" : %d, ", i, features->dim[i]);
 	}
 	
-    char const *format = "\"nnz\" : %d, \"sparsity\" : %g, \"sliceCnt\" : %llu, \"fiberCnt\" : %llu, \"nnzSliceCnt\":%d \"nnzFiberCnt\" : %d, \"slice_sparsity\" : %g, \"fiber_sparsity\" : %g, }";
+    char const *format = "\"nnz\" : %ld, \"sparsity\" : %g, \"sliceCnt\" : %llu, \"fiberCnt\" : %llu, \"nnzSliceCnt\":%d \"nnzFiberCnt\" : %d, \"slice_sparsity\" : %g, \"fiber_sparsity\" : %g, }";
 
     sprintf(buffer + strlen(buffer), format,
             features->nnz,
@@ -1983,7 +1982,7 @@ std::string base_features_to_csv(base_features *features)
 		printf(" nnz sparsity sliceCnt fiberCnt nnzSliceCnt nnzFiberCnt slice_sparsity fiber_sparsity ");
 	}
 
-    char const *format = " \t %d \t %g \t %llu \t %llu \t %d \t %d \t %g \t %g ";
+    char const *format = " \t %ld \t %g \t %llu \t %llu \t %d \t %d \t %g \t %g ";
 
     sprintf(buffer + strlen(buffer), format,
             features->nnz,
@@ -2109,14 +2108,14 @@ void print_csr_tensor(csr_tensor *T)
     printf("\n");
 
     printf("cols: ");
-    for (int i = 0; i < T->nnz; i++)
+    for (TENSORSIZE_T i = 0; i < T->nnz; i++)
     {
         printf("%d ", T->csr_cols[i]);
     }
     printf("\n");
 
     printf("values: ");
-    for (int i = 0; i < T->nnz; i++)
+    for (TENSORSIZE_T i = 0; i < T->nnz; i++)
     {
         printf("%f ", T->csr_vals[i]);
     }
@@ -2168,7 +2167,7 @@ void print_csf_tensor(csf_tensor *T)
     printf("\n");
 
     printf("csf_vals: ");
-    for (int i = 0; i < T->nnz; i++)
+    for (TENSORSIZE_T i = 0; i < T->nnz; i++)
     {
         printf("%f ", T->csf_vals[i]);
     }
