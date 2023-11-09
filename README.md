@@ -35,8 +35,7 @@ All of the following algorithms output the same set of features. So, one can use
 To use one, write the choice number of the algorithm as parameter when running main (the placeholder : [algorithm choice]).
 
 | Algorithm | N-dim | Description | 
-| --- | ----- | ----|
-
+| --------- | ----- | ------------|
 | **MAP** | ✅ | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
 | SORT | ❌ (only 3D tensors) | Sorts all the modes to make the calculation. |
 | FRAGMENT | ❌ (only 3D tensors) | For each mode, sorts the tensor except the last dimension, calculates feature after slightly modifying this structure. |
