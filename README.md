@@ -34,15 +34,15 @@ All of the following algorithms output the same set of features. So, one can use
 
 To use one, write the choice number of the algorithm as parameter when running main (the placeholder : [algorithm choice]).
 
-| Algorithm | Description | 
-| --- | ---------------|
+| Algorithm | N-dim | Description | 
+| --- | ----- | ----|
 
-| MAP | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. ***|
-| SORT | Inıtially sorts all the modes to make the calculation. |
-| FRAGMENT | For each mode, sorts the tensor except the last dimension, calculates feature after slightly modifying this structure. |
-| HYBRID | Combination of sort and fragment |
+| **MAP** | ✅ | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
+| SORT | ❌ (only 3D tensors) | Sorts all the modes to make the calculation. |
+| FRAGMENT | ❌ (only 3D tensors) | For each mode, sorts the tensor except the last dimension, calculates feature after slightly modifying this structure. |
+| HYBRID | ❌ (only 3D tensors) | Combination of sort and fragment |
 
-*** MAP is the default feature extraction method when no choice is provided. This is the only method that works for n-dim case. Others are valid for 3-dim case.
+**MAP** is the default feature extraction method when no choice is provided. This is the only method that works for n-dim case. Others are valid for 3-dim case.
 
 ### **Feature Set**
 
