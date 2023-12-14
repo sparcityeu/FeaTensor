@@ -1836,7 +1836,7 @@ std::string mode_features_to_json_fibers(mode_features *features)
     char buffer[10000];
     buffer[0] = '\0';
 
-    char const *format = "{\"id\" : %d,\"all_cnt\" : %llu,\"nz_cnt\" : %d, \"nz_density\" : %g, \"max\" : %d,\"min\" : %d,\"dev\" : %d, \"sum\" : %llu, \"avg\" : %f,  \"imbal\" : %f,\"stDev\" : %f,  \"cv\" : %f, \"avg_onlynz\" : %f, \"imbal_onlynz\" : %f, \"stDev_onlynz\" : %f, \"cv_onlynz\" : %f }";
+    char const *format = "{\"id\" : %d,\"all_cnt\" : %llu,\"nz_cnt\" : %d, \"nz_density\" : %g, \"max\" : %d,\"min\" : %d,\"dev\" : %d, \"sum\" : %llu, \"avg\" : %g,  \"imbal\" : %f,\"stDev\" : %f,  \"cv\" : %f, \"avg_onlynz\" : %f, \"imbal_onlynz\" : %f, \"stDev_onlynz\" : %f, \"cv_onlynz\" : %f }";
 
     sprintf(buffer, format,
 			features->ignored_dim1,
