@@ -727,20 +727,16 @@ void extract_final_mode(mode_features *features, TENSORSIZE_T allCnt, int *nnzPe
 	features->sum = sum;
     features->avg = avg;
 	
+	features->stDev = calculate_std(nnzPerX, nnzPerX_size, allCnt, avg);
+	features->cv = features->stDev / avg;
+	
 	// This mean is the mean of only nonzero values !
 	features->avg_onlynz = (sum + 0.0) / nnzPerX_size;
-	
 	// printf(" sum : %ld, avg: %f, avg_onlynz : %f \n", sum, avg, features->avg_onlynz);
-
-	features->stDev = calculate_std(nnzPerX, nnzPerX_size, allCnt, avg);
 	
 	// This std is the std of only nonzero values !
-    features->stDev_onlynz = calculate_std(nnzPerX, nnzPerX_size, nnzPerX_size, avg);
-
-    features->cv = features->stDev / avg;
-	
+    features->stDev_onlynz = calculate_std(nnzPerX, nnzPerX_size, nnzPerX_size, features->avg_onlynz);
 	features->cv_onlynz = features->stDev_onlynz / features->avg_onlynz;
-	
 	
 }
 
