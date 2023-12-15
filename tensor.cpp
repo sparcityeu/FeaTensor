@@ -1772,7 +1772,7 @@ std::string mode_features_to_json(mode_features *features)
     char buffer[10000];
     buffer[0] = '\0';
 
-    char const *format = "{\"id1\" : %d,\"id2\" : %d,\"all_cnt\" : %llu,\"nz_cnt\" : %d, \"nz_density\" : %g, \"max\" : %d,\"min\" : %d, \"dev\" : %d, \"sum\" : %llu, \"avg\" : %g,  \"imbal\" : %f,\"stDev\" : %f,  \"cv\" : %f, \"avg_onlynz\" : %f, \"imbal_onlynz\" : %f, \"stDev_onlynz\" : %f, \"cv_onlynz\" : %f }";
+    char const *format = "{\"id1\" : %d,\"id2\" : %d,\"all_cnt\" : %llu,\"nz_cnt\" : %d, \"nz_density\" : %g, \"max\" : %d,\"min\" : %d, \"dev\" : %d, \"sum\" : %llu, \"avg\" : %g,  \"imbal\" : %g,\"stDev\" : %g,  \"cv\" : %g, \"avg_onlynz\" : %g, \"imbal_onlynz\" : %g, \"stDev_onlynz\" : %g, \"cv_onlynz\" : %g }";
 
     sprintf(buffer, format,
 			features->ignored_dim1,
@@ -1805,7 +1805,7 @@ std::string mode_features_to_csv(mode_features *features)
 		printf (" id1 id2 all_cnt nz_cnt nz_density max min dev sum avg imbal stDev cv avg_onlynz imbal_onlynz stDev_onlynz cv_onlynz ");
 	}
 
-	char const *format = "\t %d \t %d \t %llu \t %d \t %g \t %d \t %d \t %d \t %llu \t %f \t %f \t %f \t %f \t %f \t %f \t %f \t %f ";
+	char const *format = "\t %d \t %d \t %llu \t %d \t %g \t %d \t %d \t %d \t %llu \t %g \t %g \t %g \t %g \t %g \t %g \t %g \t %g ";
 
     sprintf(buffer, format,
 			features->ignored_dim1,
@@ -1826,7 +1826,7 @@ std::string mode_features_to_csv(mode_features *features)
 			features->stDev_onlynz,
 			features->cv_onlynz);
 			
-	// printf(" // features->avg = %f // \n", features->avg);
+	// printf(" // features->avg = %g // \n", features->avg);
 
     return std::string(buffer, buffer + strlen(buffer));
 }
@@ -1836,7 +1836,7 @@ std::string mode_features_to_json_fibers(mode_features *features)
     char buffer[10000];
     buffer[0] = '\0';
 
-    char const *format = "{\"id\" : %d,\"all_cnt\" : %llu,\"nz_cnt\" : %d, \"nz_density\" : %g, \"max\" : %d,\"min\" : %d,\"dev\" : %d, \"sum\" : %llu, \"avg\" : %g,  \"imbal\" : %f,\"stDev\" : %f,  \"cv\" : %f, \"avg_onlynz\" : %f, \"imbal_onlynz\" : %f, \"stDev_onlynz\" : %f, \"cv_onlynz\" : %f }";
+    char const *format = "{\"id\" : %d,\"all_cnt\" : %llu,\"nz_cnt\" : %d, \"nz_density\" : %g, \"max\" : %d,\"min\" : %d,\"dev\" : %d, \"sum\" : %llu, \"avg\" : %g,  \"imbal\" : %g,\"stDev\" : %g,  \"cv\" : %g, \"avg_onlynz\" : %g, \"imbal_onlynz\" : %g, \"stDev_onlynz\" : %g, \"cv_onlynz\" : %g }";
 
     sprintf(buffer, format,
 			features->ignored_dim1,
@@ -1868,7 +1868,7 @@ std::string mode_features_to_csv_fibers(mode_features *features)
 		printf (" id all_cnt nz_cnt nz_density max min dev sum avg imbal stDev cv avg_onlynz imbal_onlynz stDev_onlynz cv_onlynz ");
 	}
 
-	char const *format = " \t %d \t %llu \t %d \t %g \t %d \t %d \t %d \t %llu \t %f \t %f \t %f \t %f \t %f \t %f \t %f \t %f ";
+	char const *format = " \t %d \t %llu \t %d \t %g \t %d \t %d \t %d \t %llu \t %g \t %g \t %g \t %g \t %g \t %g \t %g \t %g ";
 
     sprintf(buffer, format,
 			features->ignored_dim1,
@@ -2008,7 +2008,7 @@ std::string tensor_features_to_json(tensor_features *features)
     char buffer[1000];
     buffer[0] = '\0';
 
-    char const *format = "{\"fiberCnt\" : %llu,\"sliceCnt\" : %llu,\"nnzFiberCnt\" : %d,\"nnzSliceCnt\" : %d,\"maxNnzPerSlice\" : %d,\"minNnzPerSlice\" : %d,\"avgNnzPerSlice\" : %f,\"devNnzPerSlice\" : %d,\"stDevNnzPerSlice\" : %f,\"cvNnzPerSlice\" : %f, \"maxNnzPerFiber\" : %d,\"minNnzPerFiber\" : %d,\"avgNnzPerFiber\" : %f,\"devNnzPerFiber\" : %d,\"stDevNnzPerFiber\" : %f,\"cvNnzPerFiber\" : %f,\"maxFibersPerSlice\" : %d,\"minFibersPerSlice\" : %d,\"avgFibersPerSlice\" : %f,\"devFibersPerSlice\" : %d,\"stdDevFibersPerSlice\" : %f,\"cvFibersPerSlice\" : %f }";
+    char const *format = "{\"fiberCnt\" : %llu,\"sliceCnt\" : %llu,\"nnzFiberCnt\" : %d,\"nnzSliceCnt\" : %d,\"maxNnzPerSlice\" : %d,\"minNnzPerSlice\" : %d,\"avgNnzPerSlice\" : %g,\"devNnzPerSlice\" : %d,\"stDevNnzPerSlice\" : %g,\"cvNnzPerSlice\" : %g, \"maxNnzPerFiber\" : %d,\"minNnzPerFiber\" : %d,\"avgNnzPerFiber\" : %g,\"devNnzPerFiber\" : %d,\"stDevNnzPerFiber\" : %g,\"cvNnzPerFiber\" : %g,\"maxFibersPerSlice\" : %d,\"minFibersPerSlice\" : %d,\"avgFibersPerSlice\" : %g,\"devFibersPerSlice\" : %d,\"stdDevFibersPerSlice\" : %g,\"cvFibersPerSlice\" : %g }";
 
     sprintf(buffer, format,
             features->fiberCnt,
@@ -2061,7 +2061,7 @@ void print_tensor_features(tensor_features *features)
     printf("%e \t\t :  sparsity \n", features->sparsity);
 
     printf("\n");
-    // printf("avgNnzPerSlice :%f\n", avgNnzPerSlice);
+    // printf("avgNnzPerSlice :%g\n", avgNnzPerSlice);
     printf("%d \t\t :  maxNnzPerSlice \n", features->maxNnzPerSlice);
     printf("%d \t\t :  minNnzPerSlice \n", features->minNnzPerSlice);
     printf("%.4f \t\t :  avgNnzPerSlice \n", features->avgNnzPerSlice);
