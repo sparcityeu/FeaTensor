@@ -74,6 +74,9 @@ int main(int argc, char *argv[])
 
 	while (fin.peek() == '#')
 		fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	
+	if (method_choice != 0)	// Only map returns all features of M modes. Other methods return features of first 3 modes. 
+		only3d = 1;
 
 	std::string line;
 	std::getline(fin, line);
