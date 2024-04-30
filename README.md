@@ -73,8 +73,8 @@ The description of general features is shown in the table below.
 |sparsity | Nonzero density of the tensor  |
 |sliceCnt | # of all possible slices (even if it has no nnz) |
 |fiberCnt | # of all possible fibers (even if it has no nnz) |
-|nnzSliceCnt | # of slices which has at least 1 nnz.  |
-|nnzFiberCnt | # of fibers which has at least 1 nnz. |
+|nnzSliceCnt | # of nonzero slices (which has at least 1 nnz)  |
+|nnzFiberCnt | # of nonzero fibers (which has at least 1 nnz) |
 |slice_sparsity | Density of nonzero slices  |
 |fiber_sparsity | Density of nonzero fibers  |
 
