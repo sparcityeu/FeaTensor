@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 				method_choice = 0;
 			else if(strncmp(optarg, "sort", 4) == 0)
 				method_choice = 1;
-			else if(strncmp(optarg, "fragment", 8) == 0)
+			else if(strncmp(optarg, "group", 8) == 0)
 				method_choice = 2;
 			else if(strncmp(optarg, "hybrid", 6) == 0)
 				method_choice = 3;
@@ -74,9 +74,6 @@ int main(int argc, char *argv[])
 
 	while (fin.peek() == '#')
 		fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	
-	if (method_choice != 0)	// Only map returns all features of M modes. Other methods return features of first 3 modes. 
-		only3d = 1;
 
 	std::string line;
 	std::getline(fin, line);
@@ -100,10 +97,7 @@ int main(int argc, char *argv[])
 		fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
 	nnz++;
-	// nnz--;
-
 	
-
 	timer *file_read_tm = timer_start("time_file_read");
 	FILE *file_ptr;
 	file_ptr = fopen(filename, "r");
@@ -128,6 +122,10 @@ int main(int argc, char *argv[])
 	// printf("\nis_binary : \t%d \n", is_binary);
 	printf(" %d (extraction_method) || ", method_choice);
 	printf(" %d (max_threads) || ", omp_get_max_threads());
+	
+	if (method_choice != 0 && order > 3){	// Only map returns all features of M modes. Other methods return features of largest 3 modes. 
+		only3d = 1;
+	}
 	
 	T->org_dim = (int *)safe_malloc(order * sizeof(int));
 	

@@ -19,9 +19,6 @@
 
     Tensor Feature Extraction
     -------------------------
-
-    ** Functions defined here are only work for tensors with 3 dimensions.
-
 */
 
 using namespace std;
@@ -108,28 +105,15 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
 
     int *temp_cnt0 = (int *)safe_calloc(I0, sizeof(int));
 
-    // timer * temp_cnt0_tm = timer_start("time_temp_cnt0");
-    // timer *level0_tm = timer_start("time_level0");
-	
-	// char name_string[30];
-	// sprintf(name_string, "time_fragment_mode_%d_%d", mode_order1, mode_order2);
-	// timer *mode_tm = timer_start(name_string);
-	
-	
-	// std::string str = "time_fragment_mode";
-	// const char * c = str.c_str();
-
     // #pragma omp parallel for
     for (TENSORSIZE_T i = 0; i < nnz; i++)
     {
-        // printf(" %d ", omp_get_thread_num());
         temp_cnt0[i0[i]]++;
     }
-    // timer_end(temp_cnt0_tm);
 
     int size0 = 0;
 
-#pragma omp parallel for reduction(+ : size0)
+	#pragma omp parallel for reduction(+ : size0)
     for (int i = 0; i < I0; i++)
     {
         if (temp_cnt0[i] > 0)
@@ -169,7 +153,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
 
     int *temp_loc0 = (int *)safe_calloc(size_temp_loc0, sizeof(int));
 
-#pragma omp parallel for
+	#pragma omp parallel for
     for (int i = 0; i < size0; i++)
     {
         temp_loc0[ind0[i]] = strt0[i];
@@ -201,15 +185,12 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
 
     // timer *level1_tm = timer_start("time_level1");
 
-// double time_tmp_cnt1=0;
+	// double time_tmp_cnt1=0;
 
-// #pragma omp parallel for schedule(guided,100)
-// #pragma omp parallel for
-// #pragma omp parallel reduction(+:time_tmp_cnt1)
-#pragma omp parallel
+	#pragma omp parallel
     {
         int *tmp_cnt1 = (int *)safe_malloc(I1 * sizeof(int)); // TT REUSE ALLOC
-#pragma omp for
+		#pragma omp for
         for (int i = 0; i < size0; i++)
         {
             // timer *sub_level1_tm = timer_start("sub_level1");
@@ -287,7 +268,7 @@ dim2_tensor_fragment *coo2fragment(tensor *T, int mode_order1, int mode_order2)
     int *ind1_all = (int *)safe_malloc(size1_tot * sizeof(int));
     int *cnt1_all = (int *)safe_malloc(size1_tot * sizeof(int));
 
-#pragma omp parallel for
+	#pragma omp parallel for
     for (int i = 0; i < size0; i++)
     {
         int strt = size1_start[i];
@@ -496,7 +477,6 @@ tensor *read_tensor_binary(FILE *file_ptr, int order, TENSORSIZE_T nnz)
         // loop through the string to extract all other tokens
         for (int j = 0; j < order; j++)
         {
-            // T->indices[j][i] = atoi(token);
             T->indices[j][i] = atoi(token) - 1;
             token = strtok(NULL, " \t");
         }
@@ -574,7 +554,6 @@ double calculate_std(int *arr, int arr_size, TENSORSIZE_T num_elems, double mean
     double c_mean;
     if (mean == -1)
         c_mean = ((double)reduce_sum(arr, arr_size)) / num_elems;
-    // c_mean = ((double) reduce(arr, arr_size, SUM_OP, 0)) / num_elems;
     else
         c_mean = mean;
 
