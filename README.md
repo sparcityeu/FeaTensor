@@ -17,9 +17,9 @@ USAGE:
 featen [options]                                                                                                                                               
 -i input : input tensor path                                                                                                                                  
 -o out : feature info output file                                                                                                                            
--m method : feature extraction method. Options:{map, sort, fragment, hybrid}      [DEFAULT : map]                                                                                                            
--c csv_out : feture out file to be in csv (1) or json (0) format  [DEFAULT : 1]                                                                                        
--d only3d : features to be in only 3 dim (1) or N-dim (0) [DEFAULT : 0] 
+-m method : feature extraction method. Options:{map, sort, group, hybrid}      [DEFAULT : map]                                                                                                            
+-c csv_out : feture out file to be in csv {1} or json {0} format  [DEFAULT : 1]                                                                                        
+-d only3d : features to be in only 3 modes {1} or M modes {0} (only valid for MAP) [DEFAULT : 0] 
 
 SIMPLEST USAGE:
 ./featen -i [input-tensor-path] -o [output-file-path]
@@ -28,20 +28,23 @@ EXAMPLE:
 ./featen -i ../data_tensors/sample_small_3D.tns -o ../features/sample_small_3D_feat.txt
 ```
 
-### **Extraction Algorithms**
+### **Extraction Methods**
 
-All of the following algorithms output the same set of features. So, one can use whichever method they like. These methods provide different performances depending on the given tensor. 
+All feature extraction methods find the features of the tensor exactly. Users can use whichever method they like. These methods provide different performances depending on the given tensor. 
 
-To use one, write the choice number of the algorithm as parameter when running main (the placeholder : [algorithm choice]).
+For 3-mode tensors, all methods return the same set of features.
+For M-mode tensors (M>3), only MAP returns the features of all M modes; whereas other methods return the features of the 3 modes with the largest sizes.
 
-| Algorithm | N-dim | Description | 
-| --------- | ----- | ------------|
-| **MAP** | ✅ | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
-| SORT | ❌ (only 3D tensors) | Sorts all the modes to make the calculation. |
-| FRAGMENT | ❌ (only 3D tensors) | For each mode, sorts the tensor except the last dimension, calculates feature after slightly modifying this structure. |
-| HYBRID | ❌ (only 3D tensors) | Combination of sort and fragment |
+To use one, write the choice number of the method as a parameter (the placeholder : [algorithm choice]).
 
-**MAP** is the default feature extraction method when no choice is provided. This is the only method that works for n-dim case. Others are valid for 3-dim case.
+| Method | Description | 
+| --------- | ------------|
+| **MAP** | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
+| SORT | Sorts all the modes to make the calculation. |
+| GROUP | Groups the slices and fibers according to their indices, similar to sorting except for the last mode. |
+| HYBRID | Combination of sort and group |
+
+**MAP** is the default feature extraction method when no choice is provided. 
 
 ### **Feature Set**
 
