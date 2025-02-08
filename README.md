@@ -1,4 +1,4 @@
-# **Parallel Feature Extraction Algorithms for Sparse Tensors**
+# **FeaTensor: Parallel Feature Extraction Algorithms for Sparse Tensors**
 
 ## **Documentation 📑** 
 
