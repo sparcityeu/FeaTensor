@@ -38,10 +38,6 @@ EXAMPLE:
 
 All feature extraction methods find the features of the tensor exactly. Users can use whichever method they like. These methods provide different performances depending on the given tensor. 
 
-For 3-mode tensors, all methods return the same set of features.
-
-For M-mode tensors (M>3), only MAP returns the features of all M modes; whereas other methods return the features of the 3 modes with the largest sizes.
-
 To use one, write the choice number of the method as a parameter (the placeholder : [algorithm choice]).
 
 | Method | Description | 
@@ -52,6 +48,14 @@ To use one, write the choice number of the method as a parameter (the placeholde
 | HYBRID | Combination of sort and group |
 
 **MAP** is the default feature extraction method when no choice is provided. 
+
+For 3-mode tensors, all methods return the same set of features.
+
+For M-mode tensors (M>3), only MAP returns the features of all M modes; whereas other methods return the features of the 3 modes with the largest sizes.
+For M-mode tensors with M>=4, the option named only-3-mode ( only3d = 1 ) extracts the features along only the modes with the three largest sizes.
+This option is available for all methods in FeaTensor.
+If this option is not used ( only3d = 0 ), then all the features along all modes are extracted. For M>=4, this option is only available for the MAP method.
+
 
 ### **Feature Set**
 
