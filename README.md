@@ -42,12 +42,10 @@ To use one, write the choice number of the method as a parameter (the placeholde
 
 | Method | Description | 
 | --------- | ------------|
-| **MAP** | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
+| MAP | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
 | SORT | Sorts all the modes to make the calculation. |
 | GROUP | Groups the slices and fibers according to their indices, similar to sorting except for the last mode. |
 | HYBRID | Combination of sort and group |
-
-**MAP** is the default feature extraction method when no choice is provided. 
 
 For 3-mode tensors, all methods return the same set of features.
 
