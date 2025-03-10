@@ -47,6 +47,8 @@ To use one, write the choice number of the method as a parameter (the placeholde
 | GROUP | Groups the slices and fibers according to their indices, similar to CSF construction. |
 | HYBRID | Uses sorting-based and grouping-based algorithms for different modes, depending on mode properties. |
 
+For 3-mode tensors, all the methods extract all features along all modes.
+
 For M-mode tensors with $M \geq 4$, the option named only-3-mode ( only3d = 1 ) extracts the features along only the modes with the three largest sizes.
 This option is available for all methods in FeaTensor.
 If this option is not used ( only3d = 0 ), then all the features along all modes are extracted, which is only available for the MAP method for $M \geq 4$.
