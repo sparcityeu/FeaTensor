@@ -42,18 +42,19 @@ To use one, write the choice number of the method as a parameter (the placeholde
 
 | Method | Description | 
 | --------- | ------------|
-| MAP | Uses `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
-| SORT | Sorts all the modes to make the calculation. |
-| GROUP | Groups the slices and fibers according to their indices, similar to sorting except for the last mode. |
-| HYBRID | Combination of sort and group |
+| MAP | Uses hash table implemented with `std::unordered_map` to calculate # of nnz per fiber & slice to do the extraction. |
+| SORT | Sorts all the indices along all modes to make the calculation. |
+| GROUP | Groups the slices and fibers according to their indices, similar to CSF construction. |
+| HYBRID | Uses sorting-based and grouping-based algorithms for different modes, depending on mode properties. |
 
 For 3-mode tensors, all methods return the same set of features.
 
-For M-mode tensors (M>3), only MAP returns the features of all M modes; whereas other methods return the features of the 3 modes with the largest sizes.
+For M-mode tensors (M>=4), only MAP returns the features of all M modes; whereas other methods return the features of the 3 modes with the largest sizes.
 For M-mode tensors with M>=4, the option named only-3-mode ( only3d = 1 ) extracts the features along only the modes with the three largest sizes.
 This option is available for all methods in FeaTensor.
-If this option is not used ( only3d = 0 ), then all the features along all modes are extracted. For M>=4, this option is only available for the MAP method.
+If this option is not used ( only3d = 0 ), then all the features along all modes are extracted. For M>=4, it is only available for the MAP method.
 
+We suggest using the HYBRID method for 3-mode tensors or when the 'only-3-mode' option is used for M-mode tensors (M>=4). Otherwise, MAP method is used.
 
 ### **Feature Set**
 
