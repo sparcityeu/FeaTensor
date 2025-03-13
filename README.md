@@ -3,7 +3,9 @@
 ## **Documentation 📑** 
 
 
-This is a repository that provides different implementations for extracting the same features from tensors. The input tensor format is COO (*.tns* file format [1]). 
+This repository provides different implementations for extracting the same features from tensors. The input tensor format is COO (*.tns* file format). 
+
+For more information on this tool, please refer to the manuscript on [this link](https://arxiv.org/abs/2405.04944v2).
 
 ### **Compilation & Running**
 
@@ -113,4 +115,3 @@ The description of kind- and mode-dependent features is shown in the table below
 |stDev_onlynz | stDev by excluding empty |
 |cv_onlynz | cv by excluding empty (stDev_onlynz  / avg_onlynz ) |
 
-For more information on this tool, please refer to the manuscript on [this link](https://arxiv.org/abs/2405.04944v2).
