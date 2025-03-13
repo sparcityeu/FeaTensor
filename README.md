@@ -112,3 +112,6 @@ The description of kind- and mode-dependent features is shown in the table below
 |imbal_onlynz | imbal by excluding empty (max- avg_onlynz)/max |
 |stDev_onlynz | stDev by excluding empty |
 |cv_onlynz | cv by excluding empty (stDev_onlynz  / avg_onlynz ) |
+
+
+More details of this tool can be found in [this manuscript](https://arxiv.org/abs/2405.04944v2).
