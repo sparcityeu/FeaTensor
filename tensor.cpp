@@ -1300,7 +1300,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
 		{		
 			// printf(" -> Sort in mode %d \n", mode); //tt_last
 			
-			char name_string[30];
+			char name_string[100];
 			sprintf(name_string, "time_sort_mode_%d currfib: %llu", mode, curr_fiber_cnt);
 			timer *sort_mode_tm = timer_start(name_string);
 			
@@ -1320,7 +1320,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			
 			// printf(" -> Group in modes %d - %d \n", real_mode, next_mode); //tt_last
 			
-			char name_string[40];
+			char name_string[100];
 			sprintf(name_string, "time_fragment_mode_%d_%d currfib: %llu", real_mode, next_mode, curr_fiber_cnt);
 			
 			timer *frag_mode_tm = timer_start(name_string);
