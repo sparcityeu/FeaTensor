@@ -15,7 +15,6 @@
 #define PRINT_HEADER 0
 #define PRINT_DEBUG 0
 
-#define LAMBDA 100000000000ULL
 
 /*
 
@@ -1236,7 +1235,7 @@ if(PRINT_DEBUG){
 			
 			fiber_mode_features[curr_dim]->ignored_dim1 = curr_dim;
 			fiber_mode_features[curr_dim]->ignored_dim2 = -1;
-			fiber_mode_features[curr_dim]->all_cnt = (unsigned long long) dim[i]*dim[(i+1)%3];
+			fiber_mode_features[curr_dim]->all_cnt = (TENSORSIZE_T) dim[i]*dim[(i+1)%3];
 
 			// extract_final_mode(fiber_mode_features[curr_dim], features->nnzFiberCnt, nnzPerFiber+ fiber_offsets[i], fragments[i]->size1_tot);
             extract_final_mode(fiber_mode_features[curr_dim], fiber_mode_features[curr_dim]->all_cnt, nnzPerFiber+ fiber_offsets[i], fragments[i]->size1_tot);
@@ -1284,19 +1283,19 @@ mode_based_features *extract_features_hybrid(tensor *T)
     timer *arrays_tm = timer_start("time_find_arrays");
 	
 	int real_mode = 1;
-	unsigned long long curr_fiber_cnt;
+	TENSORSIZE_T curr_fiber_cnt;
 	
-	// unsigned long long LAMBDA = 100000000000;
+	// TENSORSIZE_T LAMBDA = 100000000000;
 	
 	int slice_offset, fiber_offset, fps_offset;
     for (int mode = 0; mode < mode_num; mode++)
     {
-		curr_fiber_cnt = ( unsigned long long ) dim[real_mode] * dim[(real_mode+1)%3];
+		curr_fiber_cnt = ( TENSORSIZE_T ) dim[real_mode] * dim[(real_mode+1)%3];
 		
 		// printf("mode: %d (%d) real_mode : %d (%d), curr_fiber_cnt(over 1e9) : %llu \n ", mode, dim[real_mode], real_mode, T->dim[real_mode], curr_fiber_cnt/1000000000);
 		// printf("\n Mode: %d , real_mode : %d , dim[real_mode] : %d , dim[real_mode+1] : %d , curr_fiber_cnt : %llu (%llu) ", mode, real_mode, dim[real_mode], dim[(real_mode+1)%3], curr_fiber_cnt, curr_fiber_cnt/1000000000);
 		
-		if (curr_fiber_cnt > LAMBDA)
+		if (curr_fiber_cnt > 1000000000)
 		{		
 			// printf(" -> Sort in mode %d \n", mode); //tt_last
 			
@@ -1431,7 +1430,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			
 			fiber_mode_features[i]->ignored_dim1 = i;
 			fiber_mode_features[i]->ignored_dim2 = -1;
-			fiber_mode_features[i]->all_cnt = (unsigned long long) dim[(i+1)%3] * dim[(i+2)%3];
+			fiber_mode_features[i]->all_cnt = (TENSORSIZE_T) dim[(i+1)%3] * dim[(i+2)%3];
 
             extract_final_mode(fiber_mode_features[i], features->nnzFiberCnt, nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
         }
