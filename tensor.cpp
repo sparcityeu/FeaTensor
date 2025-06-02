@@ -1406,8 +1406,9 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			slice_mode_features[curr_dim]->ignored_dim1 = i;
 			slice_mode_features[curr_dim]->ignored_dim2 = (i+2)%3;
 			slice_mode_features[curr_dim]->all_cnt = dim[curr_dim];
-			
-            extract_final_mode(slice_mode_features[curr_dim], features->nnzSliceCnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
+
+		// extract_final_mode(slice_mode_features[curr_dim], features->nnzSliceCnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
+            extract_final_mode(slice_mode_features[curr_dim], slice_mode_features[curr_dim]->all_cnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
         }
 
 #pragma omp for nowait
@@ -1420,7 +1421,8 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			fps_mode_features[curr_dim]->ignored_dim2 = (i+2)%3;
 			fps_mode_features[curr_dim]->all_cnt = dim[curr_dim];
    
-            extract_final_mode(fps_mode_features[curr_dim], features->nnzSliceCnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
+          //  extract_final_mode(fps_mode_features[curr_dim], features->nnzSliceCnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
+		extract_final_mode(fps_mode_features[curr_dim], fps_mode_features[curr_dim]->all_cnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
         }
 
 #pragma omp for
@@ -1432,7 +1434,8 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			fiber_mode_features[i]->ignored_dim2 = -1;
 			fiber_mode_features[i]->all_cnt = (TENSORSIZE_T) dim[(i+1)%3] * dim[(i+2)%3];
 
-            extract_final_mode(fiber_mode_features[i], features->nnzFiberCnt, nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
+         //   extract_final_mode(fiber_mode_features[i], features->nnzFiberCnt, nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
+		 extract_final_mode(fiber_mode_features[i], fiber_mode_features[i]->all_cnt , nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
         }
     }
     
