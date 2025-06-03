@@ -16,6 +16,8 @@
 #define PRINT_DEBUG 0
 #define PRINT_HYBRID 0
 
+#define LAMBDA 11
+
 
 /*
 
@@ -1289,6 +1291,8 @@ mode_based_features *extract_features_hybrid(tensor *T)
 	
 	// TENSORSIZE_T LAMBDA = 100000000000;
 	
+	 TENSORSIZE_T limit = (TENSORSIZE_T) pow(10, LAMBDA);
+	
 	int slice_offset, fiber_offset, fps_offset;
     for (int mode = 0; mode < mode_num; mode++)
     {
@@ -1297,10 +1301,10 @@ mode_based_features *extract_features_hybrid(tensor *T)
 		// printf("mode: %d (%d) real_mode : %d (%d), curr_fiber_cnt(over 1e9) : %llu \n ", mode, dim[real_mode], real_mode, T->dim[real_mode], curr_fiber_cnt/1000000000);
 		
 		if( PRINT_HYBRID){
-			printf("\n Mode: %d , real_mode : %d , dim[real_mode] : %d , dim[real_mode+1] : %d , curr_fiber_cnt : %llu (%llu) ", mode, real_mode, dim[real_mode], dim[(real_mode+1)%3], curr_fiber_cnt, curr_fiber_cnt/1000000000);
+			printf("\n Mode: %d , real_mode : %d , dim[real_mode] : %d , dim[real_mode+1] : %d , curr_fiber_cnt : %llu (%llu) ", mode, real_mode, dim[real_mode], dim[(real_mode+1)%3], curr_fiber_cnt, curr_fiber_cnt/limit);
 		}
 		
-		if (curr_fiber_cnt > 1000000000)
+		if (curr_fiber_cnt > limit)
 		{		
 			
 			if( PRINT_HYBRID){
