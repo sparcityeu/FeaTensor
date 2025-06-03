@@ -14,6 +14,7 @@
 
 #define PRINT_HEADER 0
 #define PRINT_DEBUG 0
+#define PRINT_HYBRID 1
 
 
 /*
@@ -687,12 +688,13 @@ void print_vec ( int *array, int array_size)
 }
 
 
-void extract_final_mode(mode_features *features, TENSORSIZE_T allCnt, int *nnzPerX, int nnzPerX_size)
+void extract_final_mode(mode_features *features, int *nnzPerX, int nnzPerX_size)
 {
     features->nz_cnt = nnzPerX_size;
 	features->max = reduce_max(nnzPerX, nnzPerX_size);
     features->min = reduce_min(nnzPerX, nnzPerX_size);
 	features->dev = features->max - features->min;
+	TENSORSIZE_T allCnt = features->all_cnt;
 	
 	if (PRINT_DEBUG){
 		printf(" ig_dim1 : %d, ig_dim2 : %d, ", features->ignored_dim1, features->ignored_dim2);
@@ -1050,7 +1052,7 @@ mode_based_features *extract_features_sort(tensor *T)
 			slice_mode_features[curr_dim]->all_cnt = curr_all_cnt;
 			
             // extract_final_mode(slice_mode_features[curr_dim], features->nnzSliceCnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
-			extract_final_mode(slice_mode_features[curr_dim], curr_all_cnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
+			extract_final_mode(slice_mode_features[curr_dim],  nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
 		}
 		
 		#pragma omp for nowait
@@ -1076,7 +1078,7 @@ mode_based_features *extract_features_sort(tensor *T)
 			fps_mode_features[curr_dim]->all_cnt = curr_all_cnt;
 		
             // extract_final_mode(fps_mode_features[curr_dim], features->nnzSliceCnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
-			extract_final_mode(fps_mode_features[curr_dim], curr_all_cnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
+			extract_final_mode(fps_mode_features[curr_dim], fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
         }
 
 #pragma omp for
@@ -1097,7 +1099,7 @@ mode_based_features *extract_features_sort(tensor *T)
 		
 		
 			// extract_final_mode(fiber_mode_features[i], features->nnzFiberCnt, nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
-            extract_final_mode(fiber_mode_features[i], curr_all_cnt, nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
+            extract_final_mode(fiber_mode_features[i],  nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
         }
     }
     
@@ -1211,7 +1213,7 @@ if(PRINT_DEBUG){
 			slice_mode_features[i]->all_cnt = dim[i];
 			
 			// extract_final_mode(slice_mode_features[i], features->nnzSliceCnt, nnzPerSlice + slice_offsets[i], fragments[i]->size0);
-            extract_final_mode(slice_mode_features[i], slice_mode_features[i]->all_cnt, nnzPerSlice + slice_offsets[i], fragments[i]->size0);
+            extract_final_mode(slice_mode_features[i],  nnzPerSlice + slice_offsets[i], fragments[i]->size0);
         }
 
 #pragma omp for nowait
@@ -1224,7 +1226,7 @@ if(PRINT_DEBUG){
 			fps_mode_features[i]->all_cnt = dim[i];
    
             // extract_final_mode(fps_mode_features[i], features->nnzSliceCnt, fibersPerSlice + slice_offsets[i], fragments[i]->size0);
-			extract_final_mode(fps_mode_features[i], fps_mode_features[i]->all_cnt, fibersPerSlice + slice_offsets[i], fragments[i]->size0);
+			extract_final_mode(fps_mode_features[i], fibersPerSlice + slice_offsets[i], fragments[i]->size0);
         }
 
 #pragma omp for
@@ -1238,7 +1240,7 @@ if(PRINT_DEBUG){
 			fiber_mode_features[curr_dim]->all_cnt = (TENSORSIZE_T) dim[i]*dim[(i+1)%3];
 
 			// extract_final_mode(fiber_mode_features[curr_dim], features->nnzFiberCnt, nnzPerFiber+ fiber_offsets[i], fragments[i]->size1_tot);
-            extract_final_mode(fiber_mode_features[curr_dim], fiber_mode_features[curr_dim]->all_cnt, nnzPerFiber+ fiber_offsets[i], fragments[i]->size1_tot);
+            extract_final_mode(fiber_mode_features[curr_dim], nnzPerFiber+ fiber_offsets[i], fragments[i]->size1_tot);
         }
     }
 
@@ -1293,19 +1295,28 @@ mode_based_features *extract_features_hybrid(tensor *T)
 		curr_fiber_cnt = ( TENSORSIZE_T ) dim[real_mode] * dim[(real_mode+1)%3];
 		
 		// printf("mode: %d (%d) real_mode : %d (%d), curr_fiber_cnt(over 1e9) : %llu \n ", mode, dim[real_mode], real_mode, T->dim[real_mode], curr_fiber_cnt/1000000000);
-		// printf("\n Mode: %d , real_mode : %d , dim[real_mode] : %d , dim[real_mode+1] : %d , curr_fiber_cnt : %llu (%llu) ", mode, real_mode, dim[real_mode], dim[(real_mode+1)%3], curr_fiber_cnt, curr_fiber_cnt/1000000000);
+		
+		if( PRINT_HYBRID){
+			printf("\n Mode: %d , real_mode : %d , dim[real_mode] : %d , dim[real_mode+1] : %d , curr_fiber_cnt : %llu (%llu) ", mode, real_mode, dim[real_mode], dim[(real_mode+1)%3], curr_fiber_cnt, curr_fiber_cnt/1000000000);
+		}
 		
 		if (curr_fiber_cnt > 1000000000)
 		{		
-			// printf(" -> Sort in mode %d \n", mode); //tt_last
 			
-			char name_string[100];
-			sprintf(name_string, "time_sort_mode_%d currfib: %llu", mode, curr_fiber_cnt);
+			if( PRINT_HYBRID){
+				printf(" -> Sort in mode %d \n", mode); //tt_last
+
+			}
+			
+			char name_string[200];
+			sprintf(name_string, "time_sort_%d_curr: %llu", mode, curr_fiber_cnt);
 			timer *sort_mode_tm = timer_start(name_string);
 			
 			sort_tensor(T, 1);
 
-			// printf("Sort is finished. \n");
+			if( PRINT_HYBRID){
+				printf("Sort is finished. \n");
+			}
 
 			slice_offset = calculate_nnz_per_slice_sort(T, nnzPerSlice + slice_offsets[mode], &(adjNnzPerSlice));
 			fiber_offset = calculate_nnz_per_fiber_sort(T, nnzPerFiber + fiber_offsets[mode], &(adjNnzPerFiber));
@@ -1317,17 +1328,22 @@ mode_based_features *extract_features_hybrid(tensor *T)
 		else{
 			int next_mode = (real_mode+1) %3;
 			
-			// printf(" -> Group in modes %d - %d \n", real_mode, next_mode); //tt_last
+			if( PRINT_HYBRID){
+				printf(" -> Group in modes %d - %d \n", real_mode, next_mode); //tt_last
+			}
 			
-			char name_string[100];
-			sprintf(name_string, "time_fragment_mode_%d_%d currfib: %llu", real_mode, next_mode, curr_fiber_cnt);
+			char name_string[200];
+			sprintf(name_string, "time_group_%d_%d_curr: %llu", real_mode, next_mode, curr_fiber_cnt);
 			
 			timer *frag_mode_tm = timer_start(name_string);
 			
 			dim2_tensor_fragment *fragment = coo2fragment(T, real_mode, next_mode);
 			
 			timer_end(frag_mode_tm);
-			// printf("Fragment is finished. \n");
+			
+			if( PRINT_HYBRID){
+				printf("Fragment is finished. \n");
+			}
 
 			slice_offset = fragment->size0;
 			fiber_offset = reduce_sum(fragment->size1, fragment->size0);
@@ -1408,7 +1424,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			slice_mode_features[curr_dim]->all_cnt = dim[curr_dim];
 
 		// extract_final_mode(slice_mode_features[curr_dim], features->nnzSliceCnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
-            extract_final_mode(slice_mode_features[curr_dim], slice_mode_features[curr_dim]->all_cnt, nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
+            extract_final_mode(slice_mode_features[curr_dim],  nnzPerSlice + slice_offsets[i], slice_offsets[i+1]- slice_offsets[i]);
         }
 
 #pragma omp for nowait
@@ -1422,7 +1438,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			fps_mode_features[curr_dim]->all_cnt = dim[curr_dim];
    
           //  extract_final_mode(fps_mode_features[curr_dim], features->nnzSliceCnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
-		extract_final_mode(fps_mode_features[curr_dim], fps_mode_features[curr_dim]->all_cnt, fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
+		extract_final_mode(fps_mode_features[curr_dim],  fibersPerSlice + fps_offsets[i], fps_offsets[i+1]- fps_offsets[i]);
         }
 
 #pragma omp for
@@ -1435,7 +1451,7 @@ mode_based_features *extract_features_hybrid(tensor *T)
 			fiber_mode_features[i]->all_cnt = (TENSORSIZE_T) dim[(i+1)%3] * dim[(i+2)%3];
 
          //   extract_final_mode(fiber_mode_features[i], features->nnzFiberCnt, nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
-		 extract_final_mode(fiber_mode_features[i], fiber_mode_features[i]->all_cnt , nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
+		 extract_final_mode(fiber_mode_features[i],  nnzPerFiber+ fiber_offsets[i], fiber_offsets[i+1] - fiber_offsets[i]);
         }
     }
     
@@ -1602,7 +1618,7 @@ mode_based_features *extract_features_modes(tensor *T)
 
 			// wrong calculation fixed: give the slice count of only the current mode, not all !!!
             // extract_final_mode(slice_mode_features[i], features->nnzSliceCnt, nnz_per_slice, nnz_per_slice_m[i]->map.size());
-			extract_final_mode(slice_mode_features[i], slice_mode_features[i]->all_cnt, nnz_per_slice, nnz_per_slice_size);
+			extract_final_mode(slice_mode_features[i],  nnz_per_slice, nnz_per_slice_size);
         }
 
 #pragma omp for nowait
@@ -1622,7 +1638,7 @@ mode_based_features *extract_features_modes(tensor *T)
 				}
 
             // extract_final_mode(fps_mode_features[i], features->nnzSliceCnt, fibers_per_slice, fibers_per_slice_m[i]->map.size());
-			 extract_final_mode(fps_mode_features[i], fps_mode_features[i]->all_cnt, fibers_per_slice, fibers_per_slice_size );
+			 extract_final_mode(fps_mode_features[i],  fibers_per_slice, fibers_per_slice_size );
         }
 
 #pragma omp for
@@ -1641,7 +1657,7 @@ mode_based_features *extract_features_modes(tensor *T)
 				}
 
             // extract_final_mode(fiber_mode_features[i], features->nnzFiberCnt, nnz_per_fiber, nnz_per_fiber_m[i]->map.size());
-			extract_final_mode(fiber_mode_features[i], fiber_mode_features[i]->all_cnt, nnz_per_fiber, nnz_per_fiber_size );
+			extract_final_mode(fiber_mode_features[i], nnz_per_fiber, nnz_per_fiber_size );
         }
     }
     
