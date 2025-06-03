@@ -14,7 +14,7 @@
 
 #define PRINT_HEADER 0
 #define PRINT_DEBUG 0
-#define PRINT_HYBRID 1
+#define PRINT_HYBRID 0
 
 
 /*
