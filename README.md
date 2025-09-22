@@ -5,7 +5,7 @@
 
 This repository provides different implementations for extracting the same features from tensors. The input tensor format is COO (*.tns* file format). 
 
-For more information on this tool, please refer to the manuscript on [this link](https://arxiv.org/abs/2405.04944v2).
+For more information on this tool, please refer to the manuscript on [this link](https://www.frontiersin.org/journals/applied-mathematics-and-statistics/articles/10.3389/fams.2025.1589033/full).
 
 ### **Compilation & Running**
 
