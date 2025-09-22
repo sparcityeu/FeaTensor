@@ -5,7 +5,9 @@
 
 This repository provides different implementations for extracting the same features from tensors. The input tensor format is COO (*.tns* file format). 
 
-For more information on this tool, please refer to the manuscript on [this link](https://www.frontiersin.org/journals/applied-mathematics-and-statistics/articles/10.3389/fams.2025.1589033/full).
+For more information on this tool, please refer to the paper:
+
+T. Torun, A. Taweel, and D. Unat, A sparse tensor generator with efficient feature extraction, Frontiers in Applied Mathematics and Statistics, Volume 11 (2025), https://doi.org/10.3389/fams.2025.158903, https://www.frontiersin.org/journals/applied-mathematics-and-statistics/articles/10.3389/fams.2025.1589033/full](https://doi.org/10.3389/fams.2025.158903.
 
 ### **Compilation & Running**
 
